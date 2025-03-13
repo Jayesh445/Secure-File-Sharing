@@ -17,4 +17,8 @@ public class AuditLogs {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String logId;
 
+    @ManyToOne
+    @JoinColumn(name="file_id",nullable=false)
+    private UploadedFile file;
+
 }
