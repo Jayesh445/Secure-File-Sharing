@@ -1,15 +1,22 @@
 services:
-  azurite:
-    image: 'mcr.microsoft.com/azure-storage/azurite:latest'
-    ports:
-      - '10000'
-      - '10001'
-      - '10002'
+
   postgres:
     image: 'postgres:latest'
+    container_name: postgres-db
     environment:
       - 'POSTGRES_DB=file_share'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      - 'POSTGRES_PASSWORD=root'
+      - 'POSTGRES_USER=root'
     ports:
-      - 5432:5431
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - secure_file_share_network
+
+volumes:
+  postgres_data:
+
+networks:
+  secure_file_share_network:
+    driver: bridge
