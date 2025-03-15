@@ -18,17 +18,20 @@ import java.util.Set;
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class Role {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Enumerated(EnumType.STRING)
-    @Column(unique = true)
-    private RoleType name;
+    @Column(unique = true, nullable = false)
+    private RoleType roleType;
 
     @ManyToMany(mappedBy = "roles")
     private Set<User> users = new HashSet<>();
+
+    public Role(RoleType roleType) {
+        this.roleType = roleType;
+    }
 }
 

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RoleAssignmentDto {
 
-    private String userId;
+    private UserResponseDto userResponseDto;
     private Role role;
 }
