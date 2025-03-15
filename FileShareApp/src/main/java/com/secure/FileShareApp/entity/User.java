@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -19,7 +20,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -54,17 +54,13 @@ public class User implements UserDetails {
     @Column(unique=true)
     private String email;
 
-    @CreationTimestamp
     @Column(updatable = false, name = "created_at")
     private LocalDateTime createdAt;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    @NotNull(message = "Role cannot be null")
+    private Role role;
 
     @OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<UploadedFile> files = new ArrayList<>();
@@ -85,15 +81,12 @@ public class User implements UserDetails {
         this.userName = userDto.getUserName();
         this.email = userDto.getEmail();
         this.password = userDto.getPassword();
-        this.roles.add(new Role(RoleType.USER));
-
+        this.createdAt = LocalDateTime.now();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getRoleType().name()))
-                .toList();
+        return List.of(new SimpleGrantedAuthority(role.getRoleType().name()));
     }
 
     @Override

@@ -15,12 +15,14 @@ import com.secure.FileShareApp.repository.UserRepository;
 import com.secure.FileShareApp.service.JwtService;
 import com.secure.FileShareApp.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -28,65 +30,75 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public ResponseEntity<AuthResponseDto> registerUser(UserDto userDto) {
+    public AuthResponseDto registerUser(UserDto userDto) {
+
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException("User with "+userDto.getEmail()+" already exists");
         }
-        Role defaultRole = roleRepository.findByRoleType(RoleType.USER.name())
+
+        Role defaultRole = roleRepository.findByRoleType(RoleType.USER)
                 .orElseThrow(() -> new ResourceNotFoundException("Default role USER not found"));
 
         String encodedPassword = passwordEncoder.encode(userDto.getPassword());
         User user = new User(userDto);
         user.setPassword(encodedPassword);
-        user.getRoles().add(defaultRole);
+        user.setRole(defaultRole);
         User savedUser = userRepository.save(user);
         UserResponseDto userResponseDto = new UserResponseDto(savedUser);
+        System.out.println(userResponseDto.toString());
         String token = jwtService.generateToken(user);
-        AuthResponseDto authResponseDto = new AuthResponseDto(token,userResponseDto);
-        return ResponseEntity.ok(authResponseDto);
+        System.out.println("Token: " + token);
+        return new AuthResponseDto(token,userResponseDto);
     }
 
     @Override
-    public ResponseEntity<AuthResponseDto> authenticateUser(LoginDto loginDto) {
+    public AuthResponseDto authenticateUser(LoginDto loginDto) {
+        Optional<User> user = userRepository.findByEmail(loginDto.getEmail());
+        user.orElseThrow(() ->
+                new ResourceNotFoundException("User with "+loginDto.getEmail()+" not found")
+        );
+        UserResponseDto userResponseDto = new UserResponseDto(user.get());
+        String token = jwtService.generateToken(user.get());
+
+        return new AuthResponseDto(token,userResponseDto);
+    }
+
+    @Override
+    public UserResponseDto updateUser(UserDto userDto) {
         return null;
     }
 
     @Override
-    public ResponseEntity<UserResponseDto> updateUser(UserDto userDto) {
+    public boolean deleteUser(UserDto userDto) {
+        return false;
+    }
+
+    @Override
+    public UserResponseDto getUserByEmail(String email) {
         return null;
     }
 
     @Override
-    public ResponseEntity<?> deleteUser(UserDto userDto) {
+    public User getUserById(String userId) {
         return null;
     }
 
     @Override
-    public ResponseEntity<UserResponseDto> getUserByEmail(String email) {
+    public List<UserResponseDto> getAllUsers() {
         return null;
     }
 
     @Override
-    public ResponseEntity<User> getUserById(String userId) {
+    public UserResponseDto changePassword(UserDto userDto) {
         return null;
     }
 
     @Override
-    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<UserResponseDto> changePassword(UserDto userDto) {
-        return null;
-    }
-
-    @Override
-    public ResponseEntity<RoleAssignmentDto> assignRoleToUser(UserDto userDto, RoleType role) {
+    public RoleAssignmentDto assignRoleToUser(UserDto userDto, RoleType role) {
         return null;
     }
 

@@ -2,6 +2,10 @@ spring:
   application:
     name: FileShareApp
 
+#server:
+#  servlet:
+#    context-path: /api
+
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/secure_file_db?ssl=require

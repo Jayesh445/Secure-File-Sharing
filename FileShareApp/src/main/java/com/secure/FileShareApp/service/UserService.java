@@ -7,29 +7,28 @@ import com.secure.FileShareApp.dto.UserDto;
 import com.secure.FileShareApp.dto.UserResponseDto;
 import com.secure.FileShareApp.entity.RoleType;
 import com.secure.FileShareApp.entity.User;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
 public  interface UserService extends UserDetailsService {
 
-     ResponseEntity<AuthResponseDto> registerUser(UserDto userDto);
+     AuthResponseDto registerUser(UserDto userDto);
 
-     ResponseEntity<AuthResponseDto> authenticateUser(LoginDto loginDto);
+     AuthResponseDto authenticateUser(LoginDto loginDto);
 
-     ResponseEntity<UserResponseDto> updateUser(UserDto userDto);
+     UserResponseDto updateUser(UserDto userDto);
 
-     ResponseEntity<?> deleteUser(UserDto userDto);
+     boolean deleteUser(UserDto userDto);
 
-     ResponseEntity<UserResponseDto> getUserByEmail(String email);
+     UserResponseDto getUserByEmail(String email);
 
-     ResponseEntity<User> getUserById(String userId);
+     User getUserById(String userId);
 
-     ResponseEntity<List<UserResponseDto>> getAllUsers();
+     List<UserResponseDto> getAllUsers();
 
-     ResponseEntity<UserResponseDto> changePassword(UserDto userDto);
+     UserResponseDto changePassword(UserDto userDto);
 
-     ResponseEntity<RoleAssignmentDto> assignRoleToUser(UserDto userDto, RoleType role);
+     RoleAssignmentDto assignRoleToUser(UserDto userDto, RoleType role);
 }
 
