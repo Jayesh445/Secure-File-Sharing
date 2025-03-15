@@ -19,7 +19,7 @@ public  interface UserService extends UserDetailsService {
 
      UserResponseDto updateUser(UserDto userDto);
 
-     boolean deleteUser(UserDto userDto);
+     void deleteUser(UserDto userDto);
 
      UserResponseDto getUserByEmail(String email);
 
