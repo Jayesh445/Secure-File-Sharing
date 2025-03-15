@@ -49,9 +49,7 @@ public class UserServiceImpl implements UserService {
         user.setRole(defaultRole);
         User savedUser = userRepository.save(user);
         UserResponseDto userResponseDto = new UserResponseDto(savedUser);
-        System.out.println(userResponseDto.toString());
         String token = jwtService.generateToken(user);
-        System.out.println("Token: " + token);
         return new AuthResponseDto(token,userResponseDto);
     }
 
