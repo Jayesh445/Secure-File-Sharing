@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -32,4 +34,8 @@ public class FilePermission {
     @Enumerated(EnumType.STRING)
     @NotNull(message = "Permission type cannot be null")
     private PermissionType permissionType;
+
+    private String shareToken;
+
+    private LocalDateTime expireTime;
 }

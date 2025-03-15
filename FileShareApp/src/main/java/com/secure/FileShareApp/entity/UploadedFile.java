@@ -65,4 +65,8 @@ public class UploadedFile {
     @OneToMany(mappedBy = "file", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<RequestAccess> requestAccesses = new ArrayList<>();
 
+    @OneToMany(mappedBy = "fileId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AccessCode> accessCodes = new ArrayList<>();
+
+
 }

@@ -29,6 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String email;
+        System.out.println("authHeader" + authHeader);
         System.out.println("request came here"+request.getRemoteAddr());
         if(authHeader == null || !authHeader.startsWith("Bearer ")) {
             System.out.println("invalid auth header");
@@ -37,11 +38,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         jwt = authHeader.substring(7);
         email = jwtService.extractUsername(jwt);
-        if(email == null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if(email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             User user = (User) userService.loadUserByUsername(email);
+            System.out.println("user found");
             if (jwtService.isTokenValid(jwt,user)){
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, user.getPassword() , user.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user,user.getPassword(),user.getAuthorities()));
+                System.out.println("authenticated");
             }
 
         }

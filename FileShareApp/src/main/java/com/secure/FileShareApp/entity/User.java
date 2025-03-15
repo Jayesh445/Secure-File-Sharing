@@ -1,6 +1,7 @@
 package com.secure.FileShareApp.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.secure.FileShareApp.dto.UserDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -10,8 +11,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -41,12 +40,13 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private  String userId;
 
-    @NotNull(message = "userName cannot be null")
-    @Size(min=3,max=30,message = "Username must be between 3 to 30 characters")
-    private String userName;
+    @NotNull(message = "name cannot be null")
+    @Size(min=3,max=30,message = "Name must be between 3 to 30 characters")
+    private String name;
 
     @NotNull(message = "Password cannot be null")
     @Length(min = 8,message = "Password should be of Minimum 8 characters")
+    @JsonIgnore
     private String password;
 
     @NotNull(message = "Email cannot be null")
@@ -77,8 +77,11 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<RequestAccess> requestAccesses = new ArrayList<>();
 
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<AccessCode> accessCodes = new ArrayList<>();
+
     public User(UserDto userDto){
-        this.userName = userDto.getUserName();
+        this.name = userDto.getName();
         this.email = userDto.getEmail();
         this.password = userDto.getPassword();
         this.createdAt = LocalDateTime.now();
@@ -86,7 +89,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.getRoleType().name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_"+role.getRoleType().name()));
     }
 
     @Override

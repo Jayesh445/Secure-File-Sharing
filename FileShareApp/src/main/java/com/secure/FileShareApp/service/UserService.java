@@ -5,6 +5,7 @@ import com.secure.FileShareApp.dto.LoginDto;
 import com.secure.FileShareApp.dto.RoleAssignmentDto;
 import com.secure.FileShareApp.dto.UserDto;
 import com.secure.FileShareApp.dto.UserResponseDto;
+import com.secure.FileShareApp.entity.AuditLogs;
 import com.secure.FileShareApp.entity.RoleType;
 import com.secure.FileShareApp.entity.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,7 +20,7 @@ public  interface UserService extends UserDetailsService {
 
      UserResponseDto updateUser(UserDto userDto);
 
-     boolean deleteUser(UserDto userDto);
+     void deleteUser(UserDto userDto);
 
      UserResponseDto getUserByEmail(String email);
 
@@ -30,5 +31,10 @@ public  interface UserService extends UserDetailsService {
      UserResponseDto changePassword(UserDto userDto);
 
      RoleAssignmentDto assignRoleToUser(UserDto userDto, RoleType role);
+
+     void deactivateUser(String userId);
+
+     void reactivateUser(String userId);
+
 }
 

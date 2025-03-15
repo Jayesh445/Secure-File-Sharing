@@ -18,9 +18,9 @@ public class UserResponseDto {
 
     private  String userId;
 
-    @NotNull(message = "userName cannot be null")
-    @Size(min=3,max=30,message = "Username must be between 3 to 30 characters")
-    private String username;
+    @NotNull(message = "Name cannot be null")
+    @Size(min=3,max=30,message = "Name must be between 3 to 30 characters")
+    private String name;
 
     @NotNull(message = "Email cannot be null")
     @Email(message = "Invalid email format")
@@ -32,7 +32,7 @@ public class UserResponseDto {
 
     public UserResponseDto(User user) {
         this.userId = user.getUserId();
-        this.username = user.getUsername();
+        this.name = user.getName();
         this.email = user.getEmail();
         this.createdAt = user.getCreatedAt();
         this.role = user.getRole();
