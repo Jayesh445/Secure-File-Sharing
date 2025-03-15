@@ -1,6 +1,6 @@
 package com.secure.FileShareApp.service;
 
-import com.secure.FileShareApp.entity.Role;
+import com.secure.FileShareApp.entity.RoleType;
 import com.secure.FileShareApp.entity.User;
 import org.springframework.http.ResponseEntity;
 
@@ -24,6 +24,6 @@ public interface UserService {
 
     public ResponseEntity<User> changePassword(User user);
 
-    public ResponseEntity<User> assignRoleToUser(User user, Role role);
+    public ResponseEntity<User> assignRoleToUser(User user, RoleType role);
 }
 
