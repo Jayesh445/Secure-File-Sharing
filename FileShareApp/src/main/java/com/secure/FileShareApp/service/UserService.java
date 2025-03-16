@@ -5,7 +5,6 @@ import com.secure.FileShareApp.dto.LoginDto;
 import com.secure.FileShareApp.dto.RoleAssignmentDto;
 import com.secure.FileShareApp.dto.UserDto;
 import com.secure.FileShareApp.dto.UserResponseDto;
-import com.secure.FileShareApp.entity.AuditLogs;
 import com.secure.FileShareApp.entity.RoleType;
 import com.secure.FileShareApp.entity.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
