@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface UploadedFileService {
 
-    UploadedFile uploadFile(MultipartFile file, String userId);
+    UploadedFile uploadFile(MultipartFile file, String userId, String folderPath);
 
-    List<UploadedFile> uploadMultipleFiles(List<MultipartFile> files, String userId);
+    List<UploadedFile> uploadMultipleFiles(List<MultipartFile> files, String userId,String folderPath);
 
     UploadedFile getFileById(String fileId);
 
@@ -24,12 +24,6 @@ public interface UploadedFileService {
 
     List<UploadedFile> searchFiles(String query,String userId, int page, int size);
 
-    boolean moveFile(String fileId, String newPath);
-
-    boolean copyFile(String fileId, String destinationPath);
-
-    boolean restoreDeletedFile(String fileId);
-
-    String generateFilePreview(String fileId);
+    boolean moveFile(String fileId, String newFolder);
 
 }

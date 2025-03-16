@@ -1,8 +1,8 @@
 package com.secure.FileShareApp.security;
 
 import com.secure.FileShareApp.entity.User;
-import com.secure.FileShareApp.service.JwtService;
 import com.secure.FileShareApp.service.UserService;
+import com.secure.FileShareApp.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,9 +19,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
-
+    private final JwtUtils jwtUtils;
     private final UserService userService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -37,11 +37,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         jwt = authHeader.substring(7);
-        email = jwtService.extractUsername(jwt);
+        email = jwtUtils.extractUsername(jwt);
         if(email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             User user = (User) userService.loadUserByUsername(email);
             System.out.println("user found");
-            if (jwtService.isTokenValid(jwt,user)){
+            if (jwtUtils.isTokenValid(jwt,user)){
                 SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user,user.getPassword(),user.getAuthorities()));
                 System.out.println("authenticated");
             }

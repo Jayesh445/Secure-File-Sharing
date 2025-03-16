@@ -60,22 +60,24 @@ public class User implements UserDetails {
     @NotNull(message = "Role cannot be null")
     private Role role;
 
-    @OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private boolean enabled;
+
+    @OneToMany(mappedBy = "uploadedBy", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<UploadedFile> files = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<FilePermission> filePermissions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<EmailNotification> senderEmail = new ArrayList<>();
 
-    @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<EmailNotification> recipientEmail = new ArrayList<>();
 
-    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<RequestAccess> requestAccesses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
     private List<AccessCode> accessCodes = new ArrayList<>();
 
     public User(UserDto userDto){
@@ -83,6 +85,7 @@ public class User implements UserDetails {
         this.email = userDto.getEmail();
         this.password = userDto.getPassword();
         this.createdAt = LocalDateTime.now();
+        this.enabled = true;
     }
 
     @Override
@@ -117,6 +120,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }

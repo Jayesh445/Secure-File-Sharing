@@ -12,8 +12,8 @@ import com.secure.FileShareApp.exceptions.ResourceNotFoundException;
 import com.secure.FileShareApp.exceptions.UserAlreadyExistsException;
 import com.secure.FileShareApp.repository.RoleRepository;
 import com.secure.FileShareApp.repository.UserRepository;
-import com.secure.FileShareApp.service.JwtService;
 import com.secure.FileShareApp.service.UserService;
+import com.secure.FileShareApp.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final JwtService jwtService;
+    private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
 //        System.out.println(savedUser);
         UserResponseDto userResponseDto = new UserResponseDto(savedUser);
 //        System.out.println("before jwt"+userResponseDto);
-        String token = jwtService.generateToken(user);
+        String token = jwtUtils.generateToken(user);
 //        System.out.println("after jwt"+userResponseDto);
         return new AuthResponseDto(token,userResponseDto);
     }
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
                 new ResourceNotFoundException("User with "+loginDto.getEmail()+" not found")
         );
         UserResponseDto userResponseDto = new UserResponseDto(user.get());
-        String token = jwtService.generateToken(user.get());
+        String token = jwtUtils.generateToken(user.get());
         return new AuthResponseDto(token,userResponseDto);
     }
 
@@ -115,6 +115,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void deactivateUser(String userId) {
+        User user=userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException("User with "+userId+" not found")
+        );
+        user.setEnabled(false);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void reactivateUser(String userId) {
+        User user=userRepository.findById(userId).orElseThrow(() ->
+                new ResourceNotFoundException("User with "+userId+" not found")
+        );
+        user.setEnabled(true);
+        userRepository.save(user);
+    }
+
+    @Override //TODO
     public UserResponseDto changePassword(UserDto userDto) {
         return null;
     }
@@ -125,16 +143,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deactivateUser(String userId) {
-
-    }
-
-    @Override
-    public void reactivateUser(String userId) {
-
-    }
-
-    @Override  //TODO
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByEmail(username);
         if (user.isEmpty()) {

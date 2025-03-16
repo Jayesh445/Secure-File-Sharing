@@ -12,7 +12,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,7 +21,6 @@ import java.util.List;
 
 @Data
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
 public class UploadedFile {
 
@@ -42,6 +40,8 @@ public class UploadedFile {
     @Size(min = 5, max = 500, message = "File path must be between 5 and 500 characters")
     private String filePath;
 
+    private String folderPath;
+
     @NotNull(message = "File size cannot be null")
     @Pattern(regexp = "^\\d+(\\.\\d{1,2})?\\s?(KB|MB|GB|TB)$",
             message = "Invalid file size format (e.g., 10.5 MB, 250 KB)")
@@ -56,17 +56,16 @@ public class UploadedFile {
     @OneToMany(mappedBy = "auditFile", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<AuditLogs> auditLogs = new ArrayList<>();
 
-    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<FilePermission> filePermissions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<EmailNotification> emailNotifications = new ArrayList<>();
 
-    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<RequestAccess> requestAccesses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "fileId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "fileId", cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
     private List<AccessCode> accessCodes = new ArrayList<>();
-
 
 }
