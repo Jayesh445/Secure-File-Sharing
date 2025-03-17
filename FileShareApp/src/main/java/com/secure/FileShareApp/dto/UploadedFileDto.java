@@ -1,7 +1,6 @@
 package com.secure.FileShareApp.dto;
 
 import com.secure.FileShareApp.entity.UploadedFile;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
