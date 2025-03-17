@@ -99,6 +99,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         }
     }
 
+    // TODO -- NOT WORKING PROPERLY
     @Override
     public boolean copyFile(String fileId, String destinationPath) {
         UploadedFile file = uploadedFileRepository.findById(fileId).orElseThrow(() -> new ResourceNotFoundException("File not found"));
@@ -106,7 +107,11 @@ public class CloudinaryServiceImpl implements CloudinaryService {
         String newPublicId = destinationPath + "/" + file.getFileName();
 
         try {
-            Map<?, ?> result = cloudinary.uploader().rename(oldPublicId, newPublicId, ObjectUtils.asMap("overwrite", true));
+            Map<?, ?> result = cloudinary.uploader()
+                    .upload(oldPublicId, ObjectUtils.asMap(
+                            "public_id", newPublicId,
+                            "overwrite", false
+                    ));
             if ("ok".equals(result.get("result"))) {
                 file.setFilePath(newPublicId);
                 uploadedFileRepository.save(file);
@@ -114,7 +119,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             }
             return false;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to copy file", e);
+            throw new RuntimeException("Failed to copy file "+ e.getMessage());
         }
     }
 

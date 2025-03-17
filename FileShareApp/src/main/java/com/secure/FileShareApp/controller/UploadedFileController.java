@@ -94,7 +94,7 @@ public class UploadedFileController {
     }
 
     @PutMapping("/metadata")
-    public ResponseEntity<UploadedFileDto> updateFileMetadata(UploadedFileDto uploadedFileDto) {
+    public ResponseEntity<UploadedFileDto> updateFileMetadata(@RequestBody UploadedFileDto uploadedFileDto) {
         UploadedFileDto updated = uploadedFileService.updateFileMetadata(uploadedFileDto);
         return ResponseEntity.ok(updated);
     }
@@ -106,7 +106,7 @@ public class UploadedFileController {
             @RequestParam(value = "page",required = false,defaultValue = "0") int page,
             @RequestParam(value = "size",required = false,defaultValue = "20") int size
     ){
-        Page<UploadedFileDto> searchedFiles = uploadedFileService.searchFiles(userId, query, page, size);
+        Page<UploadedFileDto> searchedFiles = uploadedFileService.searchFiles(query, userId, page, size);
         return ResponseEntity.ok(searchedFiles);
     }
 
@@ -129,9 +129,10 @@ public class UploadedFileController {
         return ResponseEntity.ok("Created folder " + folderPath);
     }
 
+    // TODO -- TESTING IS STILL PENDING AND SOME CHANGES
     @PutMapping("/copy")
     public ResponseEntity<String> copyFile(
-            @RequestBody String fileId,
+            @RequestParam String fileId,
             @RequestParam String destinationPath
     ) {
         if(!cloudinaryService.copyFile(fileId, destinationPath)){

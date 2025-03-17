@@ -114,6 +114,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
 
     @Override
     public Page<UploadedFileDto> searchFiles(String query, String userId, int page, int size) {
+        System.out.println("Searching files with query: '" + query + "' for userId: " + userId);
         User user = userService.getUserById(userId);
         PageRequest pageRequest= PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"createdAt"));
         Page<UploadedFile> uploadedFiles = uploadedFileRepository.searchByFileNameOrFileTypeOrFilePathOrFolderPath(query, user.getUserId(), pageRequest);
