@@ -42,9 +42,9 @@ public class User implements UserDetails {
     @Size(min=3,max=30,message = "Name must be between 3 to 30 characters")
     private String name;
 
+    @JsonIgnore
     @NotNull(message = "Password cannot be null")
     @Length(min = 8,message = "Password should be of Minimum 8 characters")
-    @JsonIgnore
     private String password;
 
     @NotNull(message = "Email cannot be null")

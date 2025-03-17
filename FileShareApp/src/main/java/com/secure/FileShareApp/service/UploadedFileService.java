@@ -1,6 +1,6 @@
 package com.secure.FileShareApp.service;
 
-import com.secure.FileShareApp.entity.UploadedFile;
+import com.secure.FileShareApp.dto.UploadedFileDto;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -8,21 +8,21 @@ import java.util.List;
 
 public interface UploadedFileService {
 
-    UploadedFile uploadFile(MultipartFile file, String userId, String folderPath);
+    UploadedFileDto uploadFile(MultipartFile file, String userId, String folderPath);
 
-    List<UploadedFile> uploadMultipleFiles(List<MultipartFile> files, String userId,String folderPath);
+    List<UploadedFileDto> uploadMultipleFiles(List<MultipartFile> files, String userId,String folderPath);
 
-    UploadedFile getFileById(String fileId);
+    UploadedFileDto getFileById(String fileId);
 
-    Page<UploadedFile> getFileByUserId(String userId,int page, int size);
+    Page<UploadedFileDto> getFileByUserId(String userId,int page, int size);
 
-    Page<UploadedFile> getSharedFileByUserId(String userId,int page, int size);
+    Page<UploadedFileDto> getSharedFileByUserId(String userId,int page, int size);
 
     boolean deleteFile(String fileId);
 
-    UploadedFile updateFileMetadata(UploadedFile uploadedFile);
+    UploadedFileDto updateFileMetadata(UploadedFileDto uploadedFileDto);
 
-    List<UploadedFile> searchFiles(String query,String userId, int page, int size);
+    Page<UploadedFileDto> searchFiles(String query,String userId, int page, int size);
 
     boolean moveFile(String fileId, String newFolder);
 

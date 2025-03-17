@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
@@ -46,9 +49,12 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     @Override
     public boolean moveFile(String userId, String fileName, String oldFolder, String newFolder) {
         try {
-            String oldPublicId = "user_files/" + userId + "/" + oldFolder + "/" + fileName;
-            String newPublicId = "user_files/" + userId + "/" + newFolder + "/" + fileName;
-            Map<?, ?> result = cloudinary.uploader().rename(oldPublicId, newPublicId, ObjectUtils.emptyMap());
+            String publicId = oldFolder.substring(oldFolder.lastIndexOf("/")+1);
+            System.out.println("publicId"+publicId);
+            System.out.println("oldFolder"+oldFolder);
+            System.out.println("newFolder "+newFolder);
+            String newPublicId = "user_files/" + userId + "/" + newFolder;
+            Map<?, ?> result = cloudinary.uploader().rename(oldFolder, newPublicId, ObjectUtils.emptyMap());
             return "ok".equals(result.get("result"));
         } catch (IOException e) {
             throw new RuntimeException("Failed to move file", e);
@@ -62,18 +68,34 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             cloudinary.api().deleteFolder(folderPath,ObjectUtils.emptyMap());
             return true;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to delete folder", e);
+            throw new RuntimeException("Failed to delete folder"+ e.getMessage());
         }
     }
 
     @Override
     public boolean createFolder(String userId, String folderPath) {
+        File tempFile = null;
         try {
             String fullPath = "user_files/" + userId + "/" + folderPath;
-            cloudinary.uploader().upload(new byte[0], ObjectUtils.asMap("folder", fullPath));
+            System.out.println("folderPath "+fullPath);
+            tempFile = File.createTempFile("temp", ".txt");
+            FileWriter writer = new FileWriter(tempFile);
+            writer.write("Temporary file to create folder");
+            writer.close();
+            Map<?,?> response = cloudinary.uploader().upload(tempFile, ObjectUtils.asMap(
+                    "folder", fullPath,
+                    "resource_type", "raw"
+            ));
+
+            System.out.println("Upload successful: " + response);
+            cloudinary.uploader().destroy(fullPath, ObjectUtils.emptyMap());
             return true;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to create folder", e);
+            throw new RuntimeException("Failed to create folder"+ e.getMessage());
+        }finally {
+            if(tempFile!=null && tempFile.exists()) {
+                tempFile.delete();
+            }
         }
     }
 

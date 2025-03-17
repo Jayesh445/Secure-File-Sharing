@@ -25,7 +25,7 @@ public interface UploadedFileRepository extends JpaRepository<UploadedFile, Stri
             "OR LOWER(f.folderPath) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(f.filePath) LIKE LOWER(CONCAT('%', :query, '%'))) " +
             "AND (f.uploadedBy.userId = :userId OR p.user.userId = :userId)")
-    List<UploadedFile> searchByFileNameOrFileTypeOrFilePathOrFolderPath(@Param("query") String query,
+    Page<UploadedFile> searchByFileNameOrFileTypeOrFilePathOrFolderPath(@Param("query") String query,
                                                             @Param("userId") String userId,
-                                                            PageRequest pageRequest);
+                                                            Pageable pageable);
 }

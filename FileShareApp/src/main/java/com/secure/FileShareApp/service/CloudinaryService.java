@@ -16,7 +16,8 @@ public interface CloudinaryService {
 
     boolean copyFile(String fileId, String destinationPath);
 
-    boolean restoreDeletedFile(String fileId);
-
     String generateFilePreview(String fileId);
+
+    // TODO
+    boolean restoreDeletedFile(String fileId);
 }
