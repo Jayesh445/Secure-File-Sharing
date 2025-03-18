@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BottomGradient } from "./signup-form-demo";
+import ThemeToggleButton from "./ThemeToggleButton"; // Import theme toggle button
+
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -23,30 +25,40 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="bg-red-400 h-screen w-screen flex items-center justify-center">
-      <div className="mx-auto p-6 bg-white shadow-md rounded-lg">
-        <h2 className="text-2xl font-bold mb-4 text-center text-black">Sign Up</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name Field */}
+    <div className="h-screen w-screen flex items-center justify-center bg-white dark:bg-gray-900 relative">
+      {/* toggle button */}
+      <div className="absolute top-4 right-4">
+        <ThemeToggleButton />
+      </div>
+
+      
+      <div className="w-[400px] p-8 bg-white dark:bg-gray-800 shadow-lg rounded-xl">
+        
+        <h2 className="text-3xl font-bold mb-6 text-center text-black dark:text-white">
+          Sign Up
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          
+
           <div>
-            <Label htmlFor="name" className="block font-medium">
+            <Label htmlFor="name" className="block text-lg font-medium dark:text-white">
               Name
             </Label>
+
             <Input
               type="text"
               id="name"
               name="name"
               placeholder="Enter your name"
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:text-white dark:border-gray-600"
               value={formData.name}
               onChange={handleChange}
               required
             />
           </div>
-  
-          {/* Email Field */}
+
           <div>
-            <Label htmlFor="email" className="block font-medium">
+            <Label htmlFor="email" className="block text-lg font-medium dark:text-white">
               Email
             </Label>
             <Input
@@ -54,16 +66,15 @@ const SignupPage = () => {
               id="email"
               name="email"
               placeholder="Enter your email"
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:text-white dark:border-gray-600"
               value={formData.email}
               onChange={handleChange}
               required
             />
           </div>
-  
-          {/* Password Field */}
+
           <div>
-            <Label htmlFor="password" className="block font-medium">
+            <Label htmlFor="password" className="block text-lg font-medium dark:text-white">
               Password
             </Label>
             <Input
@@ -71,20 +82,20 @@ const SignupPage = () => {
               id="password"
               name="password"
               placeholder="Enter your password"
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border rounded-lg bg-white dark:bg-gray-700 dark:text-white dark:border-gray-600"
               value={formData.password}
               onChange={handleChange}
               required
             />
           </div>
-  
-          {/* Submit Button */}
+
           <button
-          className="group/btn relative block h-10 w-full rounded-md bg-gradient-to-br from-black to-neutral-600 font-medium text-white shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:bg-zinc-800 dark:from-zinc-900 dark:to-zinc-900 dark:shadow-[0px_1px_0px_0px_#27272a_inset,0px_-1px_0px_0px_#27272a_inset]"
-          type="submit">
-          Sign up &rarr;
-          <BottomGradient />
-        </button>
+            className="relative block h-12 w-full rounded-lg bg-gradient-to-br from-black to-neutral-600 font-medium text-white text-lg shadow-lg dark:bg-gray-700 dark:text-white dark:from-gray-800 dark:to-gray-900"
+            type="submit"
+          >
+            Sign up &rarr;
+            <BottomGradient />
+          </button>
         </form>
       </div>
     </div>
