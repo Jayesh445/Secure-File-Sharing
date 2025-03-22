@@ -1,12 +1,12 @@
-import './App.css'
-import SignupPage from '@/components/SignUpPage'
-function App() {
+import AppRoutes from "@/routes/AppRoutes";
+import "./App.css";
 
+function App() {
   return (
     <>
-    {/* <SignupPage/> */}
+      <AppRoutes />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
