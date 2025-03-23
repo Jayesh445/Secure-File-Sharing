@@ -1,6 +1,8 @@
 package com.secure.FileShareApp.service;
 
+import com.secure.FileShareApp.dto.FilePermissionDto;
 import com.secure.FileShareApp.dto.UserResponseDto;
+import com.secure.FileShareApp.dto.UserWithPermissionsDto;
 import com.secure.FileShareApp.entity.FilePermission;
 import com.secure.FileShareApp.entity.PermissionType;
 
@@ -9,11 +11,11 @@ import java.util.List;
 
 public interface FilePermissionService {
 
-    FilePermission grantFilePermission(String fileId, String userId, PermissionType permissionType);
+    FilePermissionDto grantFilePermission(String fileId, String userId, PermissionType permissionType);
 
-    FilePermission revokeFilePermission(String fileId, String userId, PermissionType permissionType);
+    String revokeFilePermission(String fileId, String userId, PermissionType permissionType);
 
-    FilePermission grantPermissionWithExpiry(String fileId, String userId, PermissionType permissionType, LocalDateTime expireTime);
+    FilePermissionDto grantPermissionWithExpiry(String fileId, String userId, PermissionType permissionType, LocalDateTime expireTime);
 
     void revokeExpiryPermission();
 
@@ -21,12 +23,10 @@ public interface FilePermissionService {
 
     String getFileFromShareableLink(String token );
 
-    List<UserResponseDto> getUsersWithFileAccess(String fileId);
+    List<UserWithPermissionsDto> getUsersWithFileAccess(String fileId);
 
-    List<FilePermission> getFilePermission(String fileId);
+    List<FilePermissionDto> getFilePermission(String fileId);
 
     boolean hasFilePermission(String fileId, String userId, PermissionType permissionType);
-
-    FilePermission updateFilePermission(String fileId, String userId, PermissionType permissionType);
 
 }

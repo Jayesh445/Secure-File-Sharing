@@ -1,10 +1,18 @@
 package com.secure.FileShareApp.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,6 +20,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -19,6 +29,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class FilePermission {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String filePermissionId;
 
     @ManyToOne
@@ -31,9 +42,13 @@ public class FilePermission {
     @NotNull(message = "User cannot be null")
     private User user;
 
+    @ElementCollection(targetClass = PermissionType.class, fetch = FetchType.EAGER)
+    @JoinTable(name = "file_permission_types", joinColumns = @JoinColumn(name = "file_permission_id"))
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     @NotNull(message = "Permission type cannot be null")
-    private PermissionType permissionType;
+    private List<PermissionType> permissionTypes=new ArrayList<>();
+
 
     private String shareToken;
 
