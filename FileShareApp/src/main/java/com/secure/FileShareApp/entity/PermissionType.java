@@ -1,5 +1,5 @@
 package com.secure.FileShareApp.entity;
 
 public enum PermissionType {
-    VIEW,DOWNLOAD,EDIT,DELETE
+    VIEW,DOWNLOAD,EDIT,DELETE,OWNER,OTHER
 }

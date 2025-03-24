@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -75,23 +74,6 @@ public class FilePermissionController {
                 requestDto.getFileId(), requestDto.getUserId(), requestDto.getPermissionType()
         );
         return ResponseEntity.ok(hasPermission);
-    }
-
-    //TODO -- shareableLink need to make
-    @PostMapping("/generate-link")
-    public ResponseEntity<String> generateShareableLink(
-            @RequestBody @Valid FilePermissionWithExpiryRequestDto requestDto) {
-        String link = filePermissionService.generateShareableLink(
-                requestDto.getFileId(), requestDto.getPermissionType(),requestDto.getExpiryTime().getMinute()
-        );
-        return ResponseEntity.ok(link);
-    }
-
-    //TODO -- shareableLink need to make
-    @GetMapping("/access")
-    public ResponseEntity<String> getFileFromShareableLink(@RequestParam String token) {
-        String file = filePermissionService.getFileFromShareableLink(token);
-        return ResponseEntity.ok(file);
     }
 
 }

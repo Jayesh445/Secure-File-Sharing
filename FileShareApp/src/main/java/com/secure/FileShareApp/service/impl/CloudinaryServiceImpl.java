@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -93,7 +94,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             throw new RuntimeException("Failed to create folder"+ e.getMessage());
         }finally {
             if(tempFile!=null && tempFile.exists()) {
-                tempFile.delete();
+                System.out.println(tempFile.delete());
             }
         }
     }
@@ -130,6 +131,41 @@ public class CloudinaryServiceImpl implements CloudinaryService {
                 .transformation(new Transformation<>().quality(50))
                 .generate(uploadedFile.getFilePath());
     }
+
+    @Override
+    public String generateSignedDownloadLink(String publicId, int expiryMinutes) {
+        try {
+            long expiryTime = System.currentTimeMillis() + (long) expiryMinutes * 60 * 1000;
+             Map<String, Object> options = Map.of(
+                    "sign_url", true,
+                    "expires_at", expiryTime,
+                    "public_ids", publicId
+            );
+
+            return cloudinary.downloadArchive(options,"zip");
+        }catch (Exception e) {
+            throw new RuntimeException("Failed to generate signed download link"+ e.getMessage());
+        }
+    }
+
+    @Override
+    public String generateSignedZipDownloadLink(List<String> publicIds, int expiryMinutes) {
+        try {
+            long expiryTime = (System.currentTimeMillis() / 1000) + (expiryMinutes * 60L);
+
+            Map<String, Object> options = Map.of(
+                    "expires_at", expiryTime,
+                    "sign_url", true,
+                    "format", "zip",
+                    "public_ids", publicIds
+            );
+            return cloudinary.downloadArchive(options, "zip");
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate ZIP download link: " + e.getMessage(), e);
+        }
+    }
+
 
     @Override //TODO
     public boolean restoreDeletedFile(String fileId) {

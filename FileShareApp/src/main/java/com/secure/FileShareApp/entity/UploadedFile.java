@@ -60,12 +60,7 @@ public class UploadedFile {
     private List<FilePermission> filePermissions = new ArrayList<>();
 
     @OneToMany(mappedBy = "file", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
-    private List<EmailNotification> emailNotifications = new ArrayList<>();
-
-    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<RequestAccess> requestAccesses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "fileId", cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
-    private List<AccessCode> accessCodes = new ArrayList<>();
 
 }

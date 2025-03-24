@@ -98,15 +98,6 @@ public class FilePermissionServiceImpl implements FilePermissionService {
         }
     }
 
-    @Override //TODO -- shareableLink need to make
-    public String generateShareableLink(String fileId, PermissionType permissionType, int expiryMinutes) {
-        return "";
-    }
-
-    @Override //TODO -- shareableLink need to make
-    public String getFileFromShareableLink(String token) {
-        return "";
-    }
 
     @Override
     public List<UserWithPermissionsDto> getUsersWithFileAccess(String fileId) {

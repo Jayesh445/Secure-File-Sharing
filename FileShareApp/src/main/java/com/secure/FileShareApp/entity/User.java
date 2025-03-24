@@ -68,17 +68,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<FilePermission> filePermissions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
-    private List<EmailNotification> senderEmail = new ArrayList<>();
-
-    @OneToMany(mappedBy = "recipient", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
-    private List<EmailNotification> recipientEmail = new ArrayList<>();
-
     @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<RequestAccess> requestAccesses = new ArrayList<>();
-
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
-    private List<AccessCode> accessCodes = new ArrayList<>();
 
     public User(UserDto userDto){
         this.name = userDto.getName();
@@ -99,23 +90,23 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return UserDetails.super.isAccountNonExpired();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return UserDetails.super.isAccountNonLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 
     @Override

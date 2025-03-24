@@ -1,9 +1,7 @@
 package com.secure.FileShareApp.service;
 
 import com.secure.FileShareApp.dto.FilePermissionDto;
-import com.secure.FileShareApp.dto.UserResponseDto;
 import com.secure.FileShareApp.dto.UserWithPermissionsDto;
-import com.secure.FileShareApp.entity.FilePermission;
 import com.secure.FileShareApp.entity.PermissionType;
 
 import java.time.LocalDateTime;
@@ -17,11 +15,8 @@ public interface FilePermissionService {
 
     FilePermissionDto grantPermissionWithExpiry(String fileId, String userId, PermissionType permissionType, LocalDateTime expireTime);
 
+    @SuppressWarnings(value = "scheduled method and it is executed automatically at 00:00 everyday")
     void revokeExpiryPermission();
-
-    String generateShareableLink(String fileId, PermissionType permissionType,int expiryMinutes );
-
-    String getFileFromShareableLink(String token );
 
     List<UserWithPermissionsDto> getUsersWithFileAccess(String fileId);
 

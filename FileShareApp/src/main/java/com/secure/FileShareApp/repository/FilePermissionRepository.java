@@ -15,8 +15,6 @@ public interface FilePermissionRepository extends JpaRepository<FilePermission, 
 
     Page<FilePermission> findByUser(User user, Pageable pageable);
 
-    Optional<FilePermission> findByFile_FileIdAndUser_UserId_AndPermissionTypesIsContaining(String fileId, String userId, PermissionType permissionType);
-
     List<FilePermission> findByExpireTimeBefore(LocalDateTime expireTime);
 
     List<FilePermission> findByFile_FileId(String fileId);
@@ -24,4 +22,8 @@ public interface FilePermissionRepository extends JpaRepository<FilePermission, 
     boolean existsByFile_FileIdAndUser_UserIdAndPermissionTypesIsContaining(String fileId, String userId, PermissionType permissionType);
 
     List<FilePermission> findByFile_FileIdAndUser_UserId(String fileId, String userId);
+
+    Optional<FilePermission> findByShareToken(String shareToken);
+
+    Optional<FilePermission> findByFile_FileIdAndUser_UserIdAndPermissionTypesContaining(String fileId, String userId, PermissionType permissionType);
 }
