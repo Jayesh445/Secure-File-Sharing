@@ -1,11 +1,11 @@
 package com.secure.FileShareApp.utils;
 
 import com.secure.FileShareApp.entity.User;
-import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -19,7 +19,8 @@ import java.util.function.Function;
 public class JwtUtils{
 
 
-    private final String SECRET_KEY= Dotenv.load().get("SECRET_KEY");
+    @Value("${SECRET_KEY}")
+    private String SECRET_KEY;
 
     public String extractUsername(String token) {
         return getClaim(token, Claims::getSubject);

@@ -3,6 +3,7 @@ package com.secure.FileShareApp.utils;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,6 +24,9 @@ public class EmailUtils {
 
     private final JavaMailSender mailSender;
 
+    @Value("${MAIL_EMAIL}")
+    private String from;
+
     public void sendEmailWithStreamAttachment(String to, String subject, String body, String fileUrl, String fileName) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -31,7 +35,7 @@ public class EmailUtils {
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(body);
-            helper.setFrom("hello@demomailtrap.co");
+            helper.setFrom(from);
 
             System.out.println("sendEmailWithStreamAttachment");
             URL url = URI.create(fileUrl).toURL();

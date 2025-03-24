@@ -59,8 +59,4 @@ public class UploadedFile {
     @OneToMany(mappedBy = "file", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<FilePermission> filePermissions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
-    private List<RequestAccess> requestAccesses = new ArrayList<>();
-
-
 }

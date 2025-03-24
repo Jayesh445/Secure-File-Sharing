@@ -68,9 +68,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<FilePermission> filePermissions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
-    private List<RequestAccess> requestAccesses = new ArrayList<>();
-
     public User(UserDto userDto){
         this.name = userDto.getName();
         this.email = userDto.getEmail();

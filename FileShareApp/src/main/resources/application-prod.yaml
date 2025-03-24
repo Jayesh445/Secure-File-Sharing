@@ -1,12 +1,30 @@
 spring:
   application:
     name: FileShareApp
+  config:
+    import: optional:file:.env[.properties]
 
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?ssl=require
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+
+  mail:
+    protocol: ${MAIL_PROTOCOL}
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    ssl:
+      enabled: false
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect

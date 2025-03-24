@@ -1,6 +1,8 @@
 spring:
   application:
     name: FileShareApp
+  config:
+    import: optional:file:.env[.properties]
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -18,13 +20,13 @@ spring:
         format_sql: true
 
   mail:
-    protocol: smtp
-    host: live.smtp.mailtrap.io
-    port: 587
+    protocol: ${MAIL_PROTOCOL}
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
     ssl:
       enabled: false
-    username: api
-    password: 284b05b7da2e517d434f023b74fac370
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
     default-encoding: UTF-8
     properties:
       mail:
