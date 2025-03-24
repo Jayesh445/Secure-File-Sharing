@@ -1,8 +1,12 @@
 package com.secure.FileShareApp.service.impl;
 
+import com.secure.FileShareApp.annotation.FileIdParam;
+import com.secure.FileShareApp.annotation.LogAction;
+import com.secure.FileShareApp.annotation.UserIdParam;
 import com.secure.FileShareApp.dto.FilePermissionDto;
 import com.secure.FileShareApp.dto.UserResponseDto;
 import com.secure.FileShareApp.dto.UserWithPermissionsDto;
+import com.secure.FileShareApp.entity.AuditAction;
 import com.secure.FileShareApp.entity.FilePermission;
 import com.secure.FileShareApp.entity.PermissionType;
 import com.secure.FileShareApp.entity.UploadedFile;
@@ -33,7 +37,8 @@ public class FilePermissionServiceImpl implements FilePermissionService {
     private final UserRepository userRepository;
 
     @Override
-    public FilePermissionDto grantFilePermission(String fileId, String userId, PermissionType permissionType) {
+    @LogAction(action = AuditAction.UPDATE_PERMISSIONS)
+    public FilePermissionDto grantFilePermission(@FileIdParam String fileId, @UserIdParam String userId, PermissionType permissionType) {
         if(filePermissionRepository.existsByFile_FileIdAndUser_UserIdAndPermissionTypesIsContaining(fileId, userId, permissionType)){
             throw new RuntimeException("Permission already granted for file id " + fileId + " user id " + userId + " permission type " + permissionType);
         }
@@ -44,7 +49,8 @@ public class FilePermissionServiceImpl implements FilePermissionService {
 
     @Override
     @Transactional
-    public String revokeFilePermission(String fileId, String userId, PermissionType permissionType) {
+    @LogAction(action = AuditAction.UPDATE_PERMISSIONS)
+    public String revokeFilePermission(@FileIdParam String fileId,@UserIdParam String userId, PermissionType permissionType) {
         List<FilePermission> filePermissions = filePermissionRepository
                 .findByFile_FileIdAndUser_UserId(fileId, userId);
 
@@ -80,7 +86,8 @@ public class FilePermissionServiceImpl implements FilePermissionService {
 
 
     @Override
-    public FilePermissionDto grantPermissionWithExpiry(String fileId, String userId, PermissionType permissionType, LocalDateTime expireTime) {
+    @LogAction(action = AuditAction.UPDATE_PERMISSIONS)
+    public FilePermissionDto grantPermissionWithExpiry(@FileIdParam String fileId,@UserIdParam String userId, PermissionType permissionType, LocalDateTime expireTime) {
         FilePermission filePermission = extractFilePermission(fileId, userId, permissionType);
         filePermission.setExpireTime(expireTime);
         FilePermission saved = filePermissionRepository.save(filePermission);
@@ -89,6 +96,7 @@ public class FilePermissionServiceImpl implements FilePermissionService {
 
     @Override
     @Scheduled(cron = "0 0 0 * * ?")
+    @LogAction(action = AuditAction.UPDATE_PERMISSIONS)
     public void revokeExpiryPermission() {
         List<FilePermission> expiredPermissions = filePermissionRepository.findByExpireTimeBefore(LocalDateTime.now());
 
@@ -100,7 +108,8 @@ public class FilePermissionServiceImpl implements FilePermissionService {
 
 
     @Override
-    public List<UserWithPermissionsDto> getUsersWithFileAccess(String fileId) {
+    @LogAction(action = AuditAction.VIEW_FILE_ACCESS_LIST)
+    public List<UserWithPermissionsDto> getUsersWithFileAccess(@FileIdParam String fileId) {
         return filePermissionRepository.findByFile_FileId(fileId).stream()
                 .map(filePermission -> new UserWithPermissionsDto(
                         new UserResponseDto(filePermission.getUser()),
@@ -110,14 +119,16 @@ public class FilePermissionServiceImpl implements FilePermissionService {
     }
 
     @Override
-    public List<FilePermissionDto> getFilePermission(String fileId) {
+    @LogAction(action = AuditAction.VIEW_FILE_PERMISSION)
+    public List<FilePermissionDto> getFilePermission(@FileIdParam String fileId) {
         return filePermissionRepository.findByFile_FileId(fileId).stream()
                 .map(FilePermissionDto::new)
                 .toList();
     }
 
     @Override
-    public boolean hasFilePermission(String fileId, String userId, PermissionType permissionType) {
+    @LogAction(action = AuditAction.VIEW_FILE_PERMISSION)
+    public boolean hasFilePermission(@FileIdParam String fileId,@UserIdParam String userId, PermissionType permissionType) {
         return filePermissionRepository.existsByFile_FileIdAndUser_UserIdAndPermissionTypesIsContaining(fileId,userId,permissionType);
     }
 

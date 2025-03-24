@@ -1,5 +1,9 @@
 package com.secure.FileShareApp.service.impl;
 
+import com.secure.FileShareApp.annotation.FileIdParam;
+import com.secure.FileShareApp.annotation.LogAction;
+import com.secure.FileShareApp.annotation.UserIdParam;
+import com.secure.FileShareApp.entity.AuditAction;
 import com.secure.FileShareApp.entity.FilePermission;
 import com.secure.FileShareApp.entity.PermissionType;
 import com.secure.FileShareApp.entity.UploadedFile;
@@ -12,10 +16,14 @@ import com.secure.FileShareApp.service.CloudinaryService;
 import com.secure.FileShareApp.service.FileSharingService;
 import com.secure.FileShareApp.utils.EmailUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -60,10 +68,16 @@ public class FileSharingServiceImpl implements FileSharingService {
         }
 
         String url = cloudinaryService.generateFilePreview(fileId);
+
+        String htmlContent = loadHtmlTemplate()
+                .replace("{{PERMISSION_TYPE}}", permissionType.name())
+                .replace("{{FILE_NAME}}", uploadedFile.getFileName())
+                .replace("{{FILE_URL}}", uploadedFile.getFilePath());
+
         emailUtils.sendEmailWithStreamAttachment(
                 recipientEmail,
                 "File Access Granted",
-                "You have been granted " + permissionType + " access to the file.",
+                htmlContent,
                 url,
                 uploadedFile.getFileName()
         );
@@ -71,13 +85,15 @@ public class FileSharingServiceImpl implements FileSharingService {
     }
 
     @Override
-    public String generateOneTimeDownloadLink(String fileId, int expiryMinutes) {
+    @LogAction(action = AuditAction.DOWNLOAD_FILE)
+    public String generateOneTimeDownloadLink(@FileIdParam String fileId, int expiryMinutes) {
         UploadedFile file = uploadedFileRepository.findById(fileId)
                 .orElseThrow(() -> new RuntimeException("File not found: " + fileId));
         return cloudinaryService.generateSignedDownloadLink(file.getFilePath(), expiryMinutes);
     }
 
     @Override
+    @LogAction(action = AuditAction.DOWNLOAD_FILE)
     public String generateZipDownloadLink(List<String> fileIds, int expiryMinutes)  {
         List<String> publicIds = fileIds.stream()
                 .map(id -> uploadedFileRepository.findById(id)
@@ -90,7 +106,8 @@ public class FileSharingServiceImpl implements FileSharingService {
 
     @Override
     @Transactional
-    public String generateShareableLink(String fileId,String userId, PermissionType permissionType, int expiryMinutes) {
+    @LogAction(action = AuditAction.DOWNLOAD_FILE)
+    public String generateShareableLink(@FileIdParam String fileId, @UserIdParam String userId, PermissionType permissionType, int expiryMinutes) {
         System.out.println(" expiry -------  "+expiryMinutes);
         UploadedFile file = uploadedFileRepository.findById(fileId)
                 .orElseThrow(() -> new ResourceNotFoundException("File not found"));
@@ -110,6 +127,7 @@ public class FileSharingServiceImpl implements FileSharingService {
     }
 
     @Override
+    @LogAction(action = AuditAction.VIEW_FILE)
     public String getFileFromShareableLink(String token) {
         FilePermission filePermission = filePermissionRepository.findByShareToken(token)
                 .orElseThrow(() -> new ResourceNotFoundException("Invalid link"));
@@ -117,5 +135,14 @@ public class FileSharingServiceImpl implements FileSharingService {
             throw new RuntimeException("Shareable link has expired");
         }
         return cloudinaryService.generateFilePreview(filePermission.getFile().getFileId());
+    }
+
+    private String loadHtmlTemplate() {
+        ClassPathResource resource = new ClassPathResource("templates/email-template.html");
+        try {
+            return Files.readString(resource.getFile().toPath(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load template"+ e.getMessage());
+        }
     }
 }

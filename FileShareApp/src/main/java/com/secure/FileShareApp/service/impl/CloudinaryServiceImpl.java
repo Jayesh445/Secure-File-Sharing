@@ -3,6 +3,10 @@ package com.secure.FileShareApp.service.impl;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
+import com.secure.FileShareApp.annotation.FileIdParam;
+import com.secure.FileShareApp.annotation.LogAction;
+import com.secure.FileShareApp.annotation.UserIdParam;
+import com.secure.FileShareApp.entity.AuditAction;
 import com.secure.FileShareApp.entity.UploadedFile;
 import com.secure.FileShareApp.exceptions.ResourceNotFoundException;
 import com.secure.FileShareApp.repository.UploadedFileRepository;
@@ -25,7 +29,8 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     private final UploadedFileRepository uploadedFileRepository;
 
     @Override
-    public String uploadFile(MultipartFile file,String userId,String folderPath ) {
+    @LogAction(action = AuditAction.UPLOAD_FILE)
+    public String uploadFile(MultipartFile file, @UserIdParam String userId, String folderPath ) {
         try {
             String finalPath = (folderPath==null || folderPath.isEmpty()) ? "user_files/"+userId+"/":"user_files/"+userId+"/"+folderPath;
             Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("folder", finalPath));
@@ -36,7 +41,8 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
-    public boolean deleteFile(String userId,String folderPath,String fileName ) {
+    @LogAction(action = AuditAction.DELETE_FILE)
+    public boolean deleteFile(@UserIdParam String userId,String folderPath,String fileName ) {
         try {
             String publicId = (folderPath==null || folderPath.isEmpty()) ? "user_files/"+userId+"/"+fileName:"user_files/"+userId+"/"+folderPath+"/"+fileName;
             Map<?, ?> result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
@@ -47,7 +53,8 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
-    public boolean moveFile(String userId, String fileName, String oldFolder, String newFolder) {
+    @LogAction(action = AuditAction.EDIT_FILE)
+    public boolean moveFile(@UserIdParam String userId, String fileName, String oldFolder, String newFolder) {
         try {
             String publicId = oldFolder.substring(oldFolder.lastIndexOf("/")+1);
             System.out.println("publicId"+publicId);
@@ -62,6 +69,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
+    @LogAction(action = AuditAction.FOLDER_ACTION)
     public boolean deleteFolder(String folderPath) {
         try {
             cloudinary.api().deleteResourcesByPrefix(folderPath,ObjectUtils.emptyMap());
@@ -73,6 +81,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
+    @LogAction(action = AuditAction.FOLDER_ACTION)
     public boolean createFolder(String userId, String folderPath) {
         File tempFile = null;
         try {
@@ -101,7 +110,8 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 
     // TODO -- NOT WORKING PROPERLY
     @Override
-    public boolean copyFile(String fileId, String destinationPath) {
+    @LogAction(action = AuditAction.EDIT_FILE)
+    public boolean copyFile(@FileIdParam String fileId, String destinationPath) {
         UploadedFile file = uploadedFileRepository.findById(fileId).orElseThrow(() -> new ResourceNotFoundException("File not found"));
         String oldPublicId = file.getFilePath();
         String newPublicId = destinationPath + "/" + file.getFileName();
@@ -124,7 +134,8 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
-    public String generateFilePreview(String fileId) {
+    @LogAction(action = AuditAction.VIEW_FILE)
+    public String generateFilePreview(@FileIdParam String fileId) {
         UploadedFile uploadedFile = uploadedFileRepository.findById(fileId)
                 .orElseThrow(() -> new ResourceNotFoundException("File not found"));
         return cloudinary.url()
@@ -133,6 +144,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
+    @LogAction(action = AuditAction.DOWNLOAD_FILE)
     public String generateSignedDownloadLink(String publicId, int expiryMinutes) {
         try {
             long expiryTime = System.currentTimeMillis() + (long) expiryMinutes * 60 * 1000;
@@ -149,6 +161,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
+    @LogAction(action = AuditAction.DOWNLOAD_FILE)
     public String generateSignedZipDownloadLink(List<String> publicIds, int expiryMinutes) {
         try {
             long expiryTime = (System.currentTimeMillis() / 1000) + (expiryMinutes * 60L);

@@ -34,10 +34,9 @@ public class EmailUtils {
 
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setText(body);
+            helper.setText(body,true);
             helper.setFrom(from);
 
-            System.out.println("sendEmailWithStreamAttachment");
             URL url = URI.create(fileUrl).toURL();
             URLConnection connection = url.openConnection();
             InputStream inputStream = connection.getInputStream();
@@ -52,9 +51,7 @@ public class EmailUtils {
             byte[] fileBytes = outputStream.toByteArray();
 
             helper.addAttachment(fileName, new ByteArrayResource(fileBytes));
-            System.out.println("Sending email with attachment...");
             mailSender.send(message);
-            System.out.println("Email sent successfully!");
         } catch (MessagingException e) {
             throw new RuntimeException("Failed to attach file from Cloudinary" + e.getMessage());
         } catch (MalformedURLException e) {

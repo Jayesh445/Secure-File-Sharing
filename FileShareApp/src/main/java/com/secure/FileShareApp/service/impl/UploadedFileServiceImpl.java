@@ -1,6 +1,10 @@
 package com.secure.FileShareApp.service.impl;
 
+import com.secure.FileShareApp.annotation.FileIdParam;
+import com.secure.FileShareApp.annotation.LogAction;
+import com.secure.FileShareApp.annotation.UserIdParam;
 import com.secure.FileShareApp.dto.UploadedFileDto;
+import com.secure.FileShareApp.entity.AuditAction;
 import com.secure.FileShareApp.entity.FilePermission;
 import com.secure.FileShareApp.entity.UploadedFile;
 import com.secure.FileShareApp.entity.User;
@@ -36,7 +40,8 @@ public class UploadedFileServiceImpl implements UploadedFileService {
 
 
     @Override
-    public UploadedFileDto uploadFile(MultipartFile file, String userId, String folderPath) {
+    @LogAction(action = AuditAction.UPLOAD_FILE)
+    public UploadedFileDto uploadFile(MultipartFile file, @UserIdParam String userId, String folderPath) {
         User user = userService.getUserById(userId);
         String filePath = cloudinaryService.uploadFile(file,userId,folderPath);
         UploadedFile uploadedFile = new UploadedFile();
@@ -51,7 +56,8 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     }
 
     @Override
-    public List<UploadedFileDto> uploadMultipleFiles(List<MultipartFile> files, String userId,String folderPath) {
+    @LogAction(action = AuditAction.UPLOAD_FILE)
+    public List<UploadedFileDto> uploadMultipleFiles(List<MultipartFile> files,@UserIdParam String userId,String folderPath) {
         List<UploadedFileDto> uploadedFileDtos = new ArrayList<>();
         for (MultipartFile file : files) {
             UploadedFileDto uploadedFileDto = uploadFile(file, userId,folderPath);
@@ -61,7 +67,8 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     }
 
     @Override
-    public UploadedFileDto getFileById(String fileId) {
+    @LogAction(action = AuditAction.VIEW_FILE)
+    public UploadedFileDto getFileById(@FileIdParam String fileId) {
         UploadedFile uploadedFile = uploadedFileRepository.findById(fileId).orElseThrow(
                 () -> new RuntimeException("File not found")
         );
@@ -69,7 +76,8 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     }
 
     @Override
-    public Page<UploadedFileDto> getFileByUserId(String userId, int page, int size) {
+    @LogAction(action = AuditAction.VIEW_FILE)
+    public Page<UploadedFileDto> getFileByUserId(@UserIdParam String userId, int page, int size) {
         User user = userService.getUserById(userId);
         PageRequest pageRequest= PageRequest.of(page, size);
         Page<UploadedFile> paginatedFiles = uploadedFileRepository.findUploadedFilesByUploadedBy(user, pageRequest);
@@ -77,7 +85,8 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     }
 
     @Override
-    public Page<UploadedFileDto> getSharedFileByUserId(String userId, int page, int size) {
+    @LogAction(action = AuditAction.VIEW_FILE)
+    public Page<UploadedFileDto> getSharedFileByUserId(@UserIdParam String userId, int page, int size) {
         User user = userService.getUserById(userId);
         PageRequest pageRequest= PageRequest.of(page, size);
         Page<FilePermission> sharedFilePermissions = filePermissionRepository.findByUser(user, pageRequest);
@@ -91,7 +100,8 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     }
 
     @Override
-    public boolean deleteFile(String fileId) {
+    @LogAction(action = AuditAction.DELETE_FILE)
+    public boolean deleteFile(@FileIdParam String fileId) {
         UploadedFile uploadedFile = uploadedFileRepository.findById(fileId).orElseThrow(() -> new RuntimeException("File not found"));
         if(!cloudinaryService.deleteFile(uploadedFile.getFilePath(),uploadedFile.getFolderPath(),uploadedFile.getFileName())){
             throw new RuntimeException("Failed to delete file");
@@ -101,6 +111,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     }
 
     @Override
+    @LogAction(action = AuditAction.UPLOAD_FILE)
     public UploadedFileDto updateFileMetadata(UploadedFileDto uploadedFileDto) {
         UploadedFile uploadedFile1 = uploadedFileRepository.findById(uploadedFileDto.getFileId())
                 .orElseThrow(() -> new ResourceNotFoundException("File not found"));
@@ -113,21 +124,25 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     }
 
     @Override
-    public Page<UploadedFileDto> searchFiles(String query, String userId, int page, int size) {
+    @LogAction(action = AuditAction.VIEW_FILE)
+    public Page<UploadedFileDto> searchFiles(String query, @UserIdParam String userId, int page, int size) {
         System.out.println("Searching files with query: '" + query + "' for userId: " + userId);
         User user = userService.getUserById(userId);
         PageRequest pageRequest= PageRequest.of(page, size, Sort.by(Sort.Direction.DESC,"createdAt"));
         Page<UploadedFile> uploadedFiles = uploadedFileRepository.searchByFileNameOrFileTypeOrFilePathOrFolderPath(query, user.getUserId(), pageRequest);
+
         return uploadedFiles.map(UploadedFileDto::new );
     }
 
     @Override
-    public boolean moveFile(String fileId, String newPath) {
+    @LogAction(action = AuditAction.EDIT_FILE)
+    public boolean moveFile(@FileIdParam String fileId, String newPath) {
         Optional<UploadedFile> fileOpt = uploadedFileRepository.findById(fileId);
         if (fileOpt.isEmpty()) {
             throw new ResourceNotFoundException("File not found");
         }
         UploadedFile file = fileOpt.get();
+
         return cloudinaryService.moveFile(file.getUploadedBy().getUserId(),file.getFileName(),file.getFilePath(),newPath);
     }
 

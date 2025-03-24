@@ -47,9 +47,12 @@ server:
     context-path: /api
 
 logging:
+  file:
+    name: logs/app.logs
   level:
+    com:
+      secure: INFO
     org:
       springframework:
         security: DEBUG
     root: INFO
-    org.springframework.mail: DEBUG
