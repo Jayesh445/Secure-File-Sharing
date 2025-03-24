@@ -6,12 +6,14 @@ import com.secure.FileShareApp.annotation.UserIdParam;
 import com.secure.FileShareApp.dto.UploadedFileDto;
 import com.secure.FileShareApp.entity.AuditAction;
 import com.secure.FileShareApp.entity.FilePermission;
+import com.secure.FileShareApp.entity.PermissionType;
 import com.secure.FileShareApp.entity.UploadedFile;
 import com.secure.FileShareApp.entity.User;
 import com.secure.FileShareApp.exceptions.ResourceNotFoundException;
 import com.secure.FileShareApp.repository.FilePermissionRepository;
 import com.secure.FileShareApp.repository.UploadedFileRepository;
 import com.secure.FileShareApp.service.CloudinaryService;
+import com.secure.FileShareApp.service.FilePermissionService;
 import com.secure.FileShareApp.service.UploadedFileService;
 import com.secure.FileShareApp.service.UserService;
 import com.secure.FileShareApp.utils.FileUtils;
@@ -37,6 +39,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     private final CloudinaryService cloudinaryService;
     private final UserService userService;
     private final FilePermissionRepository filePermissionRepository;
+    private final FilePermissionService filePermissionService;
 
 
     @Override
@@ -44,6 +47,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     public UploadedFileDto uploadFile(MultipartFile file, @UserIdParam String userId, String folderPath) {
         User user = userService.getUserById(userId);
         String filePath = cloudinaryService.uploadFile(file,userId,folderPath);
+
         UploadedFile uploadedFile = new UploadedFile();
         uploadedFile.setFilePath(filePath);
         uploadedFile.setFolderPath(folderPath);
@@ -52,6 +56,8 @@ public class UploadedFileServiceImpl implements UploadedFileService {
         uploadedFile.setUploadedBy(user);
         uploadedFile.setFileSize(FileUtils.formatFileSize(file.getSize()));
         UploadedFile saved = uploadedFileRepository.save(uploadedFile);
+
+        filePermissionService.grantFilePermission(saved.getFileId(),userId, PermissionType.OWNER);
         return new UploadedFileDto(saved);
     }
 
