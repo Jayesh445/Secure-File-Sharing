@@ -1,4 +1,7 @@
 
+
+FROM openjdk:21
+
 FROM maven:3.9
 
 LABEL authors="Jayesh"
@@ -12,10 +15,6 @@ RUN mvn dependency:go-offline
 COPY src ./app/src
 
 RUN mvn clean package -Pprod -DskipTests
-
-FROM openjdk:21
-
-WORKDIR /app
 
 COPY /target/app.jar /app/app.jar
 
