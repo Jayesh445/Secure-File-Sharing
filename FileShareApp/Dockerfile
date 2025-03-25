@@ -1,6 +1,7 @@
-LABEL authors="Jayesh"
 
 FROM maven:3.9-eclipse-temurin-17 AS build
+
+LABEL authors="Jayesh"
 
 WORKDIR /app
 
