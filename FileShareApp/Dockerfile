@@ -3,10 +3,10 @@ FROM openjdk:22-slim
 
 LABEL authors="Jayesh"
 
-WORKDIR /app
+ARG JAR_FILE=target/*.jar
 
-COPY target/app.jar app.jar
+COPY ${JAR_FILE} app.jar
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "app.jar","--spring.profiles.active=prod"]
+ENTRYPOINT ["java", "-jar", "app.jar","--spring.profiles.active=prod"]
