@@ -5,7 +5,6 @@ import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
 import com.secure.FileShareApp.annotation.FileIdParam;
 import com.secure.FileShareApp.annotation.LogAction;
-import com.secure.FileShareApp.annotation.UserIdParam;
 import com.secure.FileShareApp.entity.AuditAction;
 import com.secure.FileShareApp.entity.UploadedFile;
 import com.secure.FileShareApp.exceptions.ResourceNotFoundException;
@@ -29,8 +28,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     private final UploadedFileRepository uploadedFileRepository;
 
     @Override
-    @LogAction(action = AuditAction.UPLOAD_FILE)
-    public String uploadFile(MultipartFile file, @UserIdParam String userId, String folderPath ) {
+    public String uploadFile(MultipartFile file, String userId, String folderPath ) {
         try {
             String finalPath = (folderPath==null || folderPath.isEmpty()) ? "user_files/"+userId+"/":"user_files/"+userId+"/"+folderPath;
             Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("folder", finalPath));
@@ -41,8 +39,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
-    @LogAction(action = AuditAction.DELETE_FILE)
-    public boolean deleteFile(@UserIdParam String userId,String folderPath,String fileName ) {
+    public boolean deleteFile( String userId,String folderPath,String fileName ) {
         try {
             String publicId = (folderPath==null || folderPath.isEmpty()) ? "user_files/"+userId+"/"+fileName:"user_files/"+userId+"/"+folderPath+"/"+fileName;
             Map<?, ?> result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
@@ -53,8 +50,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
-    @LogAction(action = AuditAction.EDIT_FILE)
-    public boolean moveFile(@UserIdParam String userId, String fileName, String oldFolder, String newFolder) {
+    public boolean moveFile( String userId, String fileName, String oldFolder, String newFolder) {
         try {
             String publicId = oldFolder.substring(oldFolder.lastIndexOf("/")+1);
             System.out.println("publicId"+publicId);

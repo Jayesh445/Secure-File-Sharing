@@ -26,13 +26,11 @@ public class AuditLogs {
     private String logId;
 
     @ManyToOne
-    @JoinColumn(name = "file_id", nullable = false)
-    @NotNull(message = "Audit file cannot be null")
+    @JoinColumn(name = "file_id")
     private UploadedFile auditFile;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    @NotNull(message = "User cannot be null")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Enumerated(EnumType.STRING)

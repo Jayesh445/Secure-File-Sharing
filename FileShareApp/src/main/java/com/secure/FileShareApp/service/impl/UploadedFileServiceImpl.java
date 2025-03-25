@@ -18,6 +18,7 @@ import com.secure.FileShareApp.service.UploadedFileService;
 import com.secure.FileShareApp.service.UserService;
 import com.secure.FileShareApp.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -44,6 +45,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
 
     @Override
     @LogAction(action = AuditAction.UPLOAD_FILE)
+    @Transient
     public UploadedFileDto uploadFile(MultipartFile file, @UserIdParam String userId, String folderPath) {
         User user = userService.getUserById(userId);
         String filePath = cloudinaryService.uploadFile(file,userId,folderPath);
@@ -62,8 +64,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     }
 
     @Override
-    @LogAction(action = AuditAction.UPLOAD_FILE)
-    public List<UploadedFileDto> uploadMultipleFiles(List<MultipartFile> files,@UserIdParam String userId,String folderPath) {
+    public List<UploadedFileDto> uploadMultipleFiles(List<MultipartFile> files, String userId,String folderPath) {
         List<UploadedFileDto> uploadedFileDtos = new ArrayList<>();
         for (MultipartFile file : files) {
             UploadedFileDto uploadedFileDto = uploadFile(file, userId,folderPath);

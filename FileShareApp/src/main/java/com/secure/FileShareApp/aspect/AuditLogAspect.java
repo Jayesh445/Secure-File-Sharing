@@ -3,8 +3,7 @@ package com.secure.FileShareApp.aspect;
 import com.secure.FileShareApp.annotation.FileIdParam;
 import com.secure.FileShareApp.annotation.LogAction;
 import com.secure.FileShareApp.annotation.UserIdParam;
-import com.secure.FileShareApp.entity.UploadedFile;
-import com.secure.FileShareApp.entity.User;
+import com.secure.FileShareApp.dto.UploadedFileDto;
 import com.secure.FileShareApp.service.AuditLogsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +11,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -40,11 +40,12 @@ public class AuditLogAspect {
                     } else if (strArg.equals("fileId")) {
                         fileId = strArg;
                     }
-                } else if (arg instanceof User user) {
-                    userId = user.getUserId();
-                } else if (arg instanceof UploadedFile file) {
-                    fileId = file.getFileId();
                 }
+//                else if (arg instanceof User user) {
+//                    userId = user.getUserId();
+//                } else if (arg instanceof UploadedFile file) {
+//                    fileId = file.getFileId();
+//                }
             }
 
             MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -61,20 +62,29 @@ public class AuditLogAspect {
                 }
             }
 
-            result = joinPoint.proceed();
+            result = joinPoint.proceed(); // Execute the actual method
+
+            // Now, try to extract fileId from the returned object
+            if (result instanceof UploadedFileDto fileDto) {
+                fileId = fileDto.getFileId();
+            } else if (result instanceof Page<?> pageResult && !pageResult.isEmpty()) {
+                Object firstItem = pageResult.getContent().getFirst();
+                if (firstItem instanceof UploadedFileDto fileDto) {
+                    fileId = fileDto.getFileId();
+                }
+            }
 
             message = "SUCCESS: Action [" + logAction.action() + "] executed successfully for User: " + userId + " on File: " + fileId;
             auditService.logAction(userId, fileId, logAction.action(), message);
             log.info(message);
 
+            return result;
         } catch (Exception e) {
             message = "ERROR: Action [" + logAction.action() + "] failed for User: " + userId + " on File: " + fileId + ". Reason: " + e.getMessage();
             auditService.logAction(userId, fileId, logAction.action(), message);
             log.error(message);
             throw e;
         }
-
-        return result;
     }
 }
 

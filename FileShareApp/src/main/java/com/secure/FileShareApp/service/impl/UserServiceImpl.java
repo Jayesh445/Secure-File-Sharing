@@ -1,12 +1,9 @@
 package com.secure.FileShareApp.service.impl;
 
-import com.secure.FileShareApp.annotation.LogAction;
-import com.secure.FileShareApp.annotation.UserIdParam;
 import com.secure.FileShareApp.dto.AuthResponseDto;
 import com.secure.FileShareApp.dto.LoginDto;
 import com.secure.FileShareApp.dto.UserDto;
 import com.secure.FileShareApp.dto.UserResponseDto;
-import com.secure.FileShareApp.entity.AuditAction;
 import com.secure.FileShareApp.entity.Role;
 import com.secure.FileShareApp.entity.RoleType;
 import com.secure.FileShareApp.entity.User;
@@ -37,7 +34,6 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    @LogAction(action = AuditAction.CREATE_USER)
     public AuthResponseDto registerUser(UserDto userDto) {
 
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
@@ -62,7 +58,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @LogAction(action = AuditAction.USER_LOGIN)
     public AuthResponseDto authenticateUser(LoginDto loginDto) {
         Optional<User> user = userRepository.findByEmail(loginDto.getEmail());
         user.orElseThrow(() ->
@@ -74,10 +69,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @LogAction(action = AuditAction.UPDATE_USER)
+    @Transactional
     public UserResponseDto updateUser(UserDto userDto) {
         Optional<User> user = userRepository.findByEmail(userDto.getEmail());
-//        System.out.println("userDto.getEmail():"+userDto.getEmail());
         if (user.isEmpty()) {
             throw new ResourceNotFoundException("User with "+userDto.getEmail()+" not found");
         }
@@ -89,7 +83,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    @LogAction(action = AuditAction.DELETE_USER)
     public void deleteUser(UserDto userDto) {
         if (!userRepository.existsById(userDto.getUserId())) {
             throw new ResourceNotFoundException("User with "+userDto.getUserId()+" not found");
@@ -98,7 +91,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @LogAction(action = AuditAction.VIEW_USER)
     public UserResponseDto getUserByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         if (user.isEmpty()) {
@@ -108,8 +100,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @LogAction(action = AuditAction.VIEW_USER)
-    public User getUserById(@UserIdParam String userId) {
+    public User getUserById( String userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new ResourceNotFoundException("User with "+userId+" not found");
@@ -118,14 +109,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @LogAction(action = AuditAction.VIEW_USER)
     public List<UserResponseDto> getAllUsers() {
         return userRepository.findAll().stream().map(UserResponseDto::new).collect(Collectors.toList());
     }
 
     @Override
-    @LogAction(action = AuditAction.UPDATE_USER)
-    public void deactivateUser(@UserIdParam String userId) {
+    public void deactivateUser( String userId) {
         User user=userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException("User with "+userId+" not found")
         );
@@ -134,8 +123,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @LogAction(action = AuditAction.UPDATE_USER)
-    public void reactivateUser(@UserIdParam String userId) {
+    public void reactivateUser( String userId) {
         User user=userRepository.findById(userId).orElseThrow(() ->
                 new ResourceNotFoundException("User with "+userId+" not found")
         );
@@ -144,7 +132,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override //TODO
-    @LogAction(action = AuditAction.UPDATE_USER)
     public UserResponseDto changePassword(UserDto userDto) {
         return null;
     }

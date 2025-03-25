@@ -8,11 +8,10 @@ import com.secure.FileShareApp.entity.AuditAction;
 import com.secure.FileShareApp.entity.AuditLogs;
 import com.secure.FileShareApp.entity.UploadedFile;
 import com.secure.FileShareApp.entity.User;
-import com.secure.FileShareApp.exceptions.ResourceNotFoundException;
 import com.secure.FileShareApp.repository.AuditLogsRepository;
 import com.secure.FileShareApp.repository.UploadedFileRepository;
+import com.secure.FileShareApp.repository.UserRepository;
 import com.secure.FileShareApp.service.AuditLogsService;
-import com.secure.FileShareApp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,14 +29,19 @@ import java.util.List;
 public class AuditLogsServiceImpl implements AuditLogsService {
 
     private final AuditLogsRepository auditLogsRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
     private final UploadedFileRepository uploadedFileRepository;
 
     @Override
     public void logAction(String userId, String fileId, AuditAction action, String message) {
-        User user = userService.getUserById(userId);
-        UploadedFile file = uploadedFileRepository.findById(fileId)
-                .orElseThrow(() -> new ResourceNotFoundException("File not found with id: " + fileId));
+        User user=null;
+        UploadedFile file=null;
+        if (userId != null) {
+            user = userRepository.findById(userId).orElse(null);
+        }
+        if (fileId != null) {
+            file = uploadedFileRepository.findById(fileId).orElse(null);
+        }
         AuditLogs auditLog = new AuditLogs();
         auditLog.setUser(user);
         auditLog.setAuditFile(file);

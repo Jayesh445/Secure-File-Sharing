@@ -1,6 +1,5 @@
 package com.secure.FileShareApp.dto;
 
-import com.secure.FileShareApp.entity.Role;
 import com.secure.FileShareApp.entity.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -28,14 +27,11 @@ public class UserResponseDto {
 
     private LocalDateTime createdAt;
 
-    private Role role;
-
     public UserResponseDto(User user) {
         this.userId = user.getUserId();
         this.name = user.getName();
         this.email = user.getEmail();
         this.createdAt = user.getCreatedAt();
-        this.role = user.getRole();
     }
 
 }

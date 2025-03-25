@@ -12,14 +12,16 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 public class UploadedFile {
@@ -59,4 +61,17 @@ public class UploadedFile {
     @OneToMany(mappedBy = "file", cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
     private List<FilePermission> filePermissions = new ArrayList<>();
 
+    @Override
+    public String toString() {
+        return "UploadedFile{" +
+                "fileId='" + fileId + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", fileType='" + fileType + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", folderPath='" + folderPath + '\'' +
+                ", fileSize='" + fileSize + '\'' +
+                ", createdAt=" + createdAt +
+                ", uploadedBy=" + uploadedBy +
+                '}';
+    }
 }
