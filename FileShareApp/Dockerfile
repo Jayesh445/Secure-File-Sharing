@@ -5,7 +5,11 @@ LABEL authors="Jayesh"
 
 WORKDIR /app
 
-COPY . /app/.
+COPY pom.xml ./app/pom.xml
+
+RUN mvn dependency:go-offline
+
+COPY src ./app/src
 
 RUN mvn clean package -Pprod -DskipTests
 
