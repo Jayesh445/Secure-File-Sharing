@@ -23,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -75,6 +76,9 @@ public class UploadedFileServiceImpl implements UploadedFileService {
 
     @Override
     @LogAction(action = AuditAction.VIEW_FILE)
+    @PreAuthorize(
+            "@filePermissionServiceImpl.hasFilePermission(#fileId, null, T(com.secure.FileShareApp.entity.PermissionType).VIEW)"
+    )
     public UploadedFileDto getFileById(@FileIdParam String fileId) {
         UploadedFile uploadedFile = uploadedFileRepository.findById(fileId).orElseThrow(
                 () -> new RuntimeException("File not found")
@@ -108,6 +112,11 @@ public class UploadedFileServiceImpl implements UploadedFileService {
 
     @Override
     @LogAction(action = AuditAction.DELETE_FILE)
+    @PreAuthorize("""
+                @filePermissionServiceImpl.hasFilePermission(#fileId,null,T(com.secure.FileShareApp.entity.PermissionType).DELETE)
+                || @filePermissionServiceImpl.hasFilePermission(#fileId,null,T(com.secure.FileShareApp.entity.PermissionType).OWNER)
+                """
+    )
     public boolean deleteFile(@FileIdParam String fileId) {
         UploadedFile uploadedFile = uploadedFileRepository.findById(fileId).orElseThrow(() -> new RuntimeException("File not found"));
         if(!cloudinaryService.deleteFile(uploadedFile.getFilePath(),uploadedFile.getFolderPath(),uploadedFile.getFileName())){
@@ -119,6 +128,11 @@ public class UploadedFileServiceImpl implements UploadedFileService {
 
     @Override
     @LogAction(action = AuditAction.UPLOAD_FILE)
+    @PreAuthorize("""
+                @filePermissionServiceImpl.hasFilePermission(#uploadedFileDto.fileId,null,T(com.secure.FileShareApp.entity.PermissionType).EDIT)
+                || @filePermissionServiceImpl.hasFilePermission(#uploadedFileDto.fileId,null,T(com.secure.FileShareApp.entity.PermissionType).OWNER)
+                """
+    )
     public UploadedFileDto updateFileMetadata(UploadedFileDto uploadedFileDto) {
         UploadedFile uploadedFile1 = uploadedFileRepository.findById(uploadedFileDto.getFileId())
                 .orElseThrow(() -> new ResourceNotFoundException("File not found"));
@@ -143,6 +157,11 @@ public class UploadedFileServiceImpl implements UploadedFileService {
 
     @Override
     @LogAction(action = AuditAction.EDIT_FILE)
+    @PreAuthorize("""
+                @filePermissionServiceImpl.hasFilePermission(#fileId,null,T(com.secure.FileShareApp.entity.PermissionType).EDIT)
+                || @filePermissionServiceImpl.hasFilePermission(#fileId,null,T(com.secure.FileShareApp.entity.PermissionType).OWNER)
+                """
+    )
     public boolean moveFile(@FileIdParam String fileId, String newPath) {
         Optional<UploadedFile> fileOpt = uploadedFileRepository.findById(fileId);
         if (fileOpt.isEmpty()) {

@@ -30,23 +30,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String email;
         System.out.println("authHeader" + authHeader);
-        System.out.println("request came here"+request.getRemoteAddr());
-        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
-            System.out.println("invalid auth header");
-            filterChain.doFilter(request,response);
+        System.out.println("request came here" + request.getRemoteAddr());
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
             return;
         }
         jwt = authHeader.substring(7);
         email = jwtUtils.extractUsername(jwt);
-        if(email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             User user = (User) userService.loadUserByUsername(email);
             System.out.println("user found");
-            if (jwtUtils.isTokenValid(jwt,user)){
-                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user,user.getPassword(),user.getAuthorities()));
+            if (jwtUtils.isTokenValid(jwt, user)) {
+                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities()));
                 System.out.println("authenticated");
             }
 
         }
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 }

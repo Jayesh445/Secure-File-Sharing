@@ -19,6 +19,7 @@ import com.secure.FileShareApp.service.FilePermissionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -129,6 +130,14 @@ public class FilePermissionServiceImpl implements FilePermissionService {
     @Override
     @LogAction(action = AuditAction.VIEW_FILE_PERMISSION)
     public boolean hasFilePermission(@FileIdParam String fileId,@UserIdParam String userId, PermissionType permissionType) {
+        if (userId == null) {
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if(principal instanceof User){
+                userId = ((User) principal).getUserId();
+            }else {
+                return false;
+            }
+        }
         return filePermissionRepository.existsByFile_FileIdAndUser_UserIdAndPermissionTypesIsContaining(fileId,userId,permissionType);
     }
 
