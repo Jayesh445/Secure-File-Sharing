@@ -1,20 +1,20 @@
 
-FROM maven:3.9-eclipse-temurin-17 AS build
+FROM maven:3.9
 
 LABEL authors="Jayesh"
 
 WORKDIR /app
 
-COPY . .
+COPY . /app/.
 
-CMD [ "mvn", "clean", "package", "-Pprod", "-DskipTests" ]
+RUN mvn clean package -Pprod -DskipTests
 
-FROM openjdk:22-slim
+FROM openjdk:21
 
 WORKDIR /app
 
-COPY --from=build /app/target/*.jar app.jar
+COPY /target/app.jar /app/app.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar","--spring.profiles.active=prod"]
+ENTRYPOINT ["java","-jar","app.jar","--spring.profiles.active=prod"]
