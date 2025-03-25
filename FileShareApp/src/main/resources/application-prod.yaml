@@ -1,3 +1,8 @@
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /api
+
 spring:
   application:
     name: FileShareApp
@@ -5,6 +10,11 @@ spring:
     import: optional:file:.env[.properties]
   docker:
     compose:
+      enabled: false
+  devtools:
+    restart:
+      enabled: false
+    livereload:
       enabled: false
 
   datasource:
@@ -36,7 +46,3 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
-server:
-  servlet:
-    context-path: /api
