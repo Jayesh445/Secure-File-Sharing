@@ -1,5 +1,5 @@
 
-FROM maven:3.9
+FROM jelastic/maven:3.9.5-openjdk-21
 
 WORKDIR /app
 
@@ -10,8 +10,6 @@ RUN mvn dependency:go-offline
 COPY src ./app/src
 
 RUN mvn clean package -Pprod -DskipTests
-
-FROM openjdk:21
 
 LABEL authors="Jayesh"
 
