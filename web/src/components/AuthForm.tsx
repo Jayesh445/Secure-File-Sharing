@@ -20,17 +20,43 @@ const AuthForm = ({ mode, backgroundImage }: AuthFormProps) => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const API_URL = "http://localhost:8080/api/auth";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
+    setError(null);
+
+    const endpoint = mode === "login" ? "/login" : "/register";
+    const requestBody = mode === "login"
+      ? { email, password }
+      : { name, email, password };
+
+    try {
+      const response = await fetch(`${API_URL}${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      if (mode === "login") {
+        localStorage.setItem("token", data.token); // Store JWT token
+      }
+
+      navigate("/dashboard"); // Redirect to dashboard after successful auth
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
       setIsLoading(false);
-      // Redirect to dashboard after successful authentication
-      navigate('/dashboard');
-    }, 1500);
+    }
   };
 
   const togglePasswordVisibility = () => {

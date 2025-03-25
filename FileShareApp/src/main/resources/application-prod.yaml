@@ -3,6 +3,9 @@ spring:
     name: FileShareApp
   config:
     import: optional:file:.env[.properties]
+  docker:
+    compose:
+      enabled: false
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -32,7 +35,6 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        show_sql: true
         format_sql: true
 
 server:

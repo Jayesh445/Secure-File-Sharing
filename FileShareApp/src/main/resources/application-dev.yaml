@@ -56,3 +56,9 @@ logging:
       springframework:
         security: DEBUG
     root: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: mappings
