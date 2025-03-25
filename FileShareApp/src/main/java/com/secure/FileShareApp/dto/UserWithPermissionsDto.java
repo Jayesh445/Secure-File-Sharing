@@ -1,7 +1,6 @@
 package com.secure.FileShareApp.dto;
 
 import com.secure.FileShareApp.entity.PermissionType;
-import com.secure.FileShareApp.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
