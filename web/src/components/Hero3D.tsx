@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ShieldCheck, Zap, Lock } from 'lucide-react';
+import * as THREE from 'three';
 
 const Hero3D = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -10,16 +11,8 @@ const Hero3D = () => {
 
   useEffect(() => {
     if (!canvasRef.current) return;
-
-    // Initialize Three.js scene
-    if (typeof window.THREE === 'undefined') {
-      console.error('THREE is not defined - add the script tag to index.html');
-      return;
-    }
     
-    const THREE = window.THREE;
-    
-    // Create a scene with basic elements when THREE is available
+    // Create a scene with basic elements
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -136,21 +129,21 @@ const Hero3D = () => {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-primary/90 to-blue-800 dark:from-gray-900 dark:to-gray-800">
+    <div ref={containerRef} className="relative h-screen w-full overflow-hidden bg-gradient-to-b from-primary/90 to-blue-800 dark:from-gray-900 dark:to-gray-800 pt-16 md:pt-16"> {/* Added padding top to fix navbar overlap */}
       {/* Canvas for 3D animation */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full z-0" />
       
       {/* Hero content */}
-      <div className="absolute inset-0 z-10">
+      <div className="absolute inset-0 z-10 pt-16 md:pt-0"> {/* Added padding top for mobile */}
         <div className="container mx-auto px-4 h-full flex flex-col justify-center items-center text-center">
-          <div className="max-w-3xl mx-auto pt-20">
+          <div className="max-w-3xl mx-auto pt-10 md:pt-20"> {/* Increased padding for better spacing */}
             <div className="inline-block animate-fade-in">
               <span className="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium bg-white/20 text-white backdrop-blur-sm mb-4">
                 <ShieldCheck className="w-4 h-4 mr-1" /> Secure File Sharing Made Simple
               </span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight leading-tight animate-fade-in" style={{ animationDelay: '0.1s' }}>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight leading-tight animate-fade-in" style={{ animationDelay: '0.1s' }}>
               Share Files with 
               <span className="text-gradient bg-gradient-to-r from-blue-200 to-white"> Complete Confidence</span>
             </h1>
@@ -175,7 +168,7 @@ const Hero3D = () => {
           </div>
           
           {/* Key feature highlights */}
-          <div className="mt-16 w-full max-w-4xl animate-fade-in" style={{ animationDelay: '0.4s' }}>
+          <div className="mt-16 w-full max-w-4xl animate-fade-in hidden md:block" style={{ animationDelay: '0.4s' }}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/20 transition-all duration-300 hover:bg-white/20 hover:scale-105 hover:shadow-lg">
                 <div className="flex items-center mb-3">
@@ -205,6 +198,38 @@ const Hero3D = () => {
                   <h3 className="ml-3 text-lg font-medium text-white">Privacy First</h3>
                 </div>
                 <p className="text-white/70 text-sm">Full control over access and permissions</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Mobile feature highlights */}
+          <div className="mt-10 w-full px-4 md:hidden animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            <div className="flex flex-col gap-3">
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                <div className="flex items-center">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <Lock className="h-4 w-4 text-white" />
+                  </div>
+                  <h3 className="ml-3 text-base font-medium text-white">End-to-End Encryption</h3>
+                </div>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                <div className="flex items-center">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <Zap className="h-4 w-4 text-white" />
+                  </div>
+                  <h3 className="ml-3 text-base font-medium text-white">Lightning Fast</h3>
+                </div>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
+                <div className="flex items-center">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <ShieldCheck className="h-4 w-4 text-white" />
+                  </div>
+                  <h3 className="ml-3 text-base font-medium text-white">Privacy First</h3>
+                </div>
               </div>
             </div>
           </div>

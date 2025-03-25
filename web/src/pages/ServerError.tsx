@@ -27,11 +27,12 @@ const ServerError = () => {
     }
   };
   
-  const serverVariants = {
-    hidden: { scale: 0.8, opacity: 0 },
+  const iconVariants = {
+    hidden: { scale: 0.8, opacity: 0, rotate: 15 },
     visible: { 
       scale: 1, 
-      opacity: 1,
+      opacity: 1, 
+      rotate: 0,
       transition: { 
         duration: 0.5,
         type: "spring",
@@ -41,30 +42,32 @@ const ServerError = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background px-4">
       <motion.div 
-        className="text-center px-4"
+        className="text-center"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         <motion.div 
           className="flex justify-center mb-6"
-          variants={serverVariants}
+          variants={iconVariants}
         >
           <motion.div 
-            className="h-24 w-24 rounded-full bg-orange-500/10 flex items-center justify-center"
+            className="h-24 w-24 rounded-full bg-destructive/10 flex items-center justify-center"
             animate={{ 
-              rotate: [0, 5, -5, 0],
-              y: [0, -5, 0]
+              boxShadow: [
+                "0 0 0 0 rgba(239, 68, 68, 0)",
+                "0 0 0 15px rgba(239, 68, 68, 0.2)",
+                "0 0 0 0 rgba(239, 68, 68, 0)"
+              ]
             }}
             transition={{ 
               repeat: Infinity,
-              duration: 2,
-              ease: "easeInOut"
+              duration: 2
             }}
           >
-            <ServerCrash className="h-12 w-12 text-orange-500" />
+            <ServerCrash className="h-12 w-12 text-destructive" />
           </motion.div>
         </motion.div>
         
@@ -76,17 +79,10 @@ const ServerError = () => {
         </motion.h1>
         
         <motion.p 
-          className="text-xl text-muted-foreground mb-2"
+          className="text-xl text-muted-foreground mb-8"
           variants={itemVariants}
         >
-          Server Error
-        </motion.p>
-        
-        <motion.p 
-          className="text-muted-foreground mb-8 max-w-md mx-auto"
-          variants={itemVariants}
-        >
-          Something went wrong on our end. Our team has been notified and is working on a fix.
+          Server Error! Something went wrong on our end.
         </motion.p>
         
         <motion.div variants={itemVariants}>

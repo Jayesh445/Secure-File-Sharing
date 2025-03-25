@@ -36,14 +36,16 @@ const Navbar = () => {
   return (
     <header 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-sm' 
-          : 'bg-transparent'
+        isScrolled || isMobileMenuOpen
+          ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm' 
+          : location.pathname === '/' 
+            ? 'bg-transparent' 
+            : 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md'
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Logo variant={!isScrolled && location.pathname === '/' ? 'light' : 'default'} />
+          <Logo variant={((!isScrolled && !isMobileMenuOpen) && location.pathname === '/') ? 'light' : 'default'} />
           
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
@@ -53,7 +55,7 @@ const Navbar = () => {
                   key={item.name}
                   to={item.path}
                   className={`text-sm font-medium transition-colors hover:text-primary link-underline ${
-                    !isScrolled && location.pathname === '/' 
+                    (!isScrolled && location.pathname === '/') 
                       ? 'text-white hover:text-white/90' 
                       : 'text-foreground'
                   }`}
@@ -80,7 +82,11 @@ const Navbar = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="relative text-foreground"
+              className={`relative ${
+                (!isScrolled && location.pathname === '/') 
+                ? 'text-white' 
+                : 'text-foreground'
+              }`}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle menu"
             >
