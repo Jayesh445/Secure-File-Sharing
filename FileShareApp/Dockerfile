@@ -1,17 +1,11 @@
 
 FROM jelastic/maven:3.9.5-openjdk-21
 
+LABEL authors="Jayesh"
+
 WORKDIR /app
 
-COPY pom.xml ./app/pom.xml
-
-COPY src ./app/src
-
-RUN mvn dependency:go-offline
-
-RUN mvn clean package -Pprod -DskipTests
-
-LABEL authors="Jayesh"
+CMD ls
 
 COPY /target/app.jar /app/app.jar
 
