@@ -1,11 +1,18 @@
+LABEL authors="Jayesh"
+
+FROM maven:3.9-eclipse-temurin-17 AS build
+
+WORKDIR /app
+
+COPY . .
+
+CMD [ "mvn", "clean", "package", "-Pprod", "-DskipTests" ]
 
 FROM openjdk:22-slim
 
-LABEL authors="Jayesh"
+WORKDIR /app
 
-ARG JAR_FILE=target/*.jar
-
-COPY ${JAR_FILE} app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
