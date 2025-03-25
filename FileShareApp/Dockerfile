@@ -5,7 +5,7 @@ LABEL authors="Jayesh"
 
 WORKDIR /app
 
-COPY target/*.jar FileShareApp-0.0.1.jar
+COPY target/*.jar app.jar
 
 EXPOSE 8080
 
