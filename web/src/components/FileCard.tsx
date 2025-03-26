@@ -8,31 +8,34 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { cn } from '@/lib/utils';
 
 export interface FileData {
-  id: string;
-  name: string;
-  type: string;
-  size: string;
+  fileId: string;
+  fileName: string;
+  fileType: string;
+  fileSize: string;
+  filePath: string;
+  folderPath: string;
   createdAt: Date;
   shared: boolean;
-  thumbnail?: string;
 }
 
 interface FileCardProps {
   file: FileData;
   onShare: (file: FileData) => void;
-  onDelete: (id: string) => void;
+  onDelete: (fileId: string) => void;
   compact?: boolean;
 }
 
 const FileCard = ({ file, onShare, onDelete, compact = false }: FileCardProps) => {
   const [isHovering, setIsHovering] = useState(false);
+
+  const CLOUD_URL = import.meta.env.VITE_CLOUD_URL;
   
   const fileTypeIcon = () => {
-    switch (file.type.split('/')[0]) {
+    switch (file.fileType.split('/')[0]) {
       case 'image':
         return <img 
-          src={file.thumbnail || '/placeholder.svg'} 
-          alt={file.name} 
+          src={CLOUD_URL+"/"+file.filePath || '/placeholder.svg'} 
+          alt={file.fileName} 
           className="w-full h-full object-cover rounded-t-lg" 
         />;
       default:
@@ -111,9 +114,9 @@ const FileCard = ({ file, onShare, onDelete, compact = false }: FileCardProps) =
           )}
           
           <div className="overflow-hidden">
-            <p className="font-medium truncate" title={file.name}>{file.name}</p>
+            <p className="font-medium truncate" title={file.fileName}>{file.fileName}</p>
             <div className="flex items-center text-xs text-muted-foreground space-x-2">
-              <span>{file.size}</span>
+              <span>{file.fileSize}</span>
               <span>•</span>
               <span className="flex items-center">
                 <Clock className="h-3 w-3 mr-1" />
@@ -162,7 +165,7 @@ const FileCard = ({ file, onShare, onDelete, compact = false }: FileCardProps) =
               <DropdownMenuSeparator />
               <DropdownMenuItem 
                 className="text-destructive focus:text-destructive"
-                onClick={() => onDelete(file.id)}
+                onClick={() => onDelete(file.fileId)}
               >
                 <Trash className="h-4 w-4 mr-2" />
                 Delete
