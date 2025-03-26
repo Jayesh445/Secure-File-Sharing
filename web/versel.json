@@ -5,7 +5,11 @@
     }
   },
   "routes": [
-    { "src": "/(.*)", "dest": "/index.html" }
+    {
+      "src": "/(.*)",
+      "dest": "/index.html",
+      "status": 200
+    }
   ],
   "errorPages": {
     "404": "/404",
