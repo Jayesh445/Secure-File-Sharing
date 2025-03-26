@@ -26,6 +26,7 @@ import UserDropdown from "@/components/UserDropdown";
 import apiClient from "@/lib/axios";
 import useAuthStore from "@/store/useAuthStore";
 import SkeletonLoader from "@/components/SkeletonLoader";
+import UploadModal from "@/components/UploadModal";
 
 // Sample data
 // const mockFiles: FileData[] = [
@@ -227,10 +228,7 @@ const Dashboard = () => {
                     </Button>
                   </div>
 
-                  <Button>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Upload
-                  </Button>
+                  <UploadModal/>
                 </div>
               </div>
 

@@ -35,7 +35,7 @@ public class UploadedFile {
     private String fileName;
 
     @NotNull(message = "File type cannot be null")
-    @Size(max = 50, message = "File type cannot exceed 50 characters")
+    @Size(max = 100, message = "File type cannot exceed 100 characters")
     private String fileType;
 
     @NotNull(message = "File path cannot be null")

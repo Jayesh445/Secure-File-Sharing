@@ -49,6 +49,8 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     @Transient
     public UploadedFileDto uploadFile(MultipartFile file, @UserIdParam String userId, String folderPath) {
         User user = userService.getUserById(userId);
+        System.out.println("File Type: " + file.getContentType()); // Debugging
+
         String filePath = cloudinaryService.uploadFile(file,userId,folderPath);
 
         UploadedFile uploadedFile = new UploadedFile();

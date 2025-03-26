@@ -31,7 +31,13 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     public String uploadFile(MultipartFile file, String userId, String folderPath ) {
         try {
             String finalPath = (folderPath==null || folderPath.isEmpty()) ? "user_files/"+userId+"/":"user_files/"+userId+"/"+folderPath;
-            Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap("folder", finalPath));
+            String resourceType = file.getContentType() != null && file.getContentType().startsWith("image")
+                    ? "image"
+                    : "raw";
+            Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.asMap(
+                    "folder", finalPath,
+                    "resource_type", resourceType
+            ));
             return uploadResult.get("public_id").toString();
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload file", e);
