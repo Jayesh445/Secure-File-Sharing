@@ -63,7 +63,6 @@ public class UploadedFileController {
        return ResponseEntity.ok(uploadedFileDtoPage);
     }
 
-    // TODO -- testing remaining only due to share feature still need to be added
     @GetMapping("/shared/{userId}")
     public ResponseEntity<Page<UploadedFileDto>> getSharedFiles(
             @PathVariable String userId,
