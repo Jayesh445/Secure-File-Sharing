@@ -43,7 +43,9 @@ const AuthForm = ({ mode, backgroundImage }: AuthFormProps) => {
       if (data.token) {
         localStorage.setItem("token", data.token); 
       }
-  
+      if(data.userDto){
+        localStorage.setItem("user", JSON.stringify(data.userDto));
+      }
       navigate("/dashboard"); 
     } catch (err: any) {
       console.log(err)
