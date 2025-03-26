@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Logo from './Logo';
+import apiClient from '@/utils/axios';
 
 interface AuthFormProps {
   mode: 'login' | 'signup';
@@ -22,42 +23,36 @@ const AuthForm = ({ mode, backgroundImage }: AuthFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const API_URL = "http://localhost:8080/api/auth";
-
+  const API_URL = "/auth"; // Base URL is already set in `apiClient`
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
+    console.log(import.meta.env.VITE_BACKEND_URL)
+  
     const endpoint = mode === "login" ? "/login" : "/register";
     const requestBody = mode === "login"
       ? { email, password }
       : { name, email, password };
-
+  
     try {
-      const response = await fetch(`${API_URL}${endpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Something went wrong");
+      const { data } = await apiClient.post(`${API_URL}${endpoint}`, requestBody);
+      console.log(data)
+      if (data.token) {
+        localStorage.setItem("token", data.token); 
       }
-
-      if (mode === "login") {
-        localStorage.setItem("token", data.token); // Store JWT token
-      }
-
-      navigate("/dashboard"); // Redirect to dashboard after successful auth
+  
+      navigate("/dashboard"); 
     } catch (err: any) {
-      setError(err.message);
+      console.log(err)
+      setError(err.response?.data?.message || "Something went wrong");
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
