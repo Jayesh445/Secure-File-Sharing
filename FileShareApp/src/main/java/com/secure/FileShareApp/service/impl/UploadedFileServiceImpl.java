@@ -103,6 +103,9 @@ public class UploadedFileServiceImpl implements UploadedFileService {
         Page<FilePermission> sharedFilePermissions = filePermissionRepository.findByUser(user, pageRequest);
         List<UploadedFileDto> sharedFileDtos = sharedFilePermissions
                 .getContent().stream()
+                .filter(filePermission -> filePermission.getPermissionTypes()
+                        .stream().noneMatch(permissionType -> permissionType == PermissionType.OWNER)
+                        )
                 .map(FilePermission::getFile)
                 .distinct()
                 .map(UploadedFileDto::new)

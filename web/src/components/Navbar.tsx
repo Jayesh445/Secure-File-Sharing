@@ -1,15 +1,17 @@
-
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import Logo from './Logo';
-import ThemeToggle from './ThemeToggle';
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Logo from "./Logo";
+import ThemeToggle from "./ThemeToggle";
+import useAuthStore from "@/store/useAuthStore";
+import UserDropdown from "./UserDropdown";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { user, isAuthenticated, logout } = useAuthStore();
 
   // Handle scroll effect
   useEffect(() => {
@@ -18,8 +20,8 @@ const Navbar = () => {
       setIsScrolled(scrollPosition > 20);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Close mobile menu when changing routes
@@ -28,25 +30,30 @@ const Navbar = () => {
   }, [location.pathname]);
 
   const navItems = [
-    { name: 'Features', path: '/#features' },
-    { name: 'Pricing', path: '/#pricing' },
-    { name: 'About', path: '/#about' },
+    { name: "Features", path: "/features" },
+    { name: "About", path: "/about" },
   ];
 
   return (
-    <header 
+    <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled || isMobileMenuOpen
-          ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm' 
-          : location.pathname === '/' 
-            ? 'bg-transparent' 
-            : 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md'
+          ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm"
+          : location.pathname === "/"
+          ? "bg-transparent"
+          : "bg-white/90 dark:bg-gray-900/90 backdrop-blur-md"
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          <Logo variant={((!isScrolled && !isMobileMenuOpen) && location.pathname === '/') ? 'light' : 'default'} />
-          
+          <Logo
+            variant={
+              !isScrolled && !isMobileMenuOpen && location.pathname === "/"
+                ? "light"
+                : "default"
+            }
+          />
+
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
             <div className="flex items-center space-x-6">
@@ -55,27 +62,42 @@ const Navbar = () => {
                   key={item.name}
                   to={item.path}
                   className={`text-sm font-medium transition-colors hover:text-primary link-underline ${
-                    (!isScrolled && location.pathname === '/') 
-                      ? 'text-white hover:text-white/90' 
-                      : 'text-foreground'
+                    !isScrolled && location.pathname === "/"
+                      ? "text-white hover:text-white/90"
+                      : "text-foreground"
                   }`}
                 >
                   {item.name}
                 </Link>
               ))}
             </div>
-            
-            <div className="flex items-center space-x-3">
-              <ThemeToggle />
-              <Button asChild variant="ghost" size="sm" className="hover:bg-primary/10">
-                <Link to="/login">Log in</Link>
-              </Button>
-              <Button asChild size="sm">
-                <Link to="/signup">Sign up</Link>
-              </Button>
-            </div>
+
+            {isAuthenticated ? (
+              <>
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/dashboard">Dashboard</Link>
+                </Button>
+                <UserDropdown/>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center space-x-3">
+                  <ThemeToggle />
+                  <Button
+                    asChild
+                    variant="ghost"
+                    size="sm"
+                    className="hover:bg-primary/10"
+                  >
+                    <Link to="/login">Log in</Link>
+                  </Button>
+                  <Button asChild size="sm">
+                    <Link to="/signup">Sign up</Link>
+                  </Button>
+                </div>
+              </>
+            )}
           </nav>
-          
           {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden gap-2">
             <ThemeToggle />
@@ -83,9 +105,9 @@ const Navbar = () => {
               variant="ghost"
               size="icon"
               className={`relative ${
-                (!isScrolled && location.pathname === '/') 
-                ? 'text-white' 
-                : 'text-foreground'
+                !isScrolled && location.pathname === "/"
+                  ? "text-white"
+                  : "text-foreground"
               }`}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle menu"
@@ -99,7 +121,7 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-background dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 animate-fade-in">

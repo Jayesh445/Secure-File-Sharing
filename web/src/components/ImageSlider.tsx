@@ -11,17 +11,17 @@ interface Slide {
 
 const slides: Slide[] = [
   {
-    image: '/placeholder.svg',
+    image: '/dashboard.png',
     title: 'Secure Dashboard',
     description: 'Manage all your files in one secure place with intuitive controls'
   },
   {
-    image: '/placeholder.svg',
+    image: '/easy-sharing.png',
     title: 'Simple Sharing',
     description: 'Share files with just a few clicks and control who can access them'
   },
   {
-    image: '/placeholder.svg',
+    image: '/detailed-analytics.webp',
     title: 'Detailed Analytics',
     description: 'Track who viewed your files and when with comprehensive analytics'
   }

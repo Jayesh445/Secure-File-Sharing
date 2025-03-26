@@ -16,8 +16,8 @@ const CTASection = () => {
               Create Free Account
             </Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="border-white/20 hover:bg-white/10">
-            <Link to="/#features">
+          <Button asChild size="lg" variant="outline" className="border-white/20 dark:hover:bg-white/50 dark:hover:border-white/70 dark:hover:text-gray-800 text-blue-600">
+            <Link to="/features">
               Learn More
             </Link>
           </Button>

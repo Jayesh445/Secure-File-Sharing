@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,9 @@ import FileCard, { FileData } from '@/components/FileCard';
 import ShareModal from '@/components/ShareModal';
 import ThemeToggle from '@/components/ThemeToggle';
 import { FileSymlink, Search, Grid3X3, List, Plus, User, Settings, LogOut, Upload, ChevronRight, Eye, DownloadCloud, Clock, File } from 'lucide-react';
+import UserDropdown from '@/components/UserDropdown';
+import apiClient from '@/lib/axios';
+import useAuthStore from '@/store/useAuthStore';
 
 // Sample data
 const mockFiles: FileData[] = [
@@ -17,7 +20,7 @@ const mockFiles: FileData[] = [
     name: 'Project_Presentation.pptx',
     type: 'application/pptx',
     size: '2.4 MB',
-    modified: '2 days ago',
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
     shared: true,
   },
   {
@@ -25,7 +28,7 @@ const mockFiles: FileData[] = [
     name: 'Budget_2023.xlsx',
     type: 'application/xlsx',
     size: '1.8 MB',
-    modified: '5 days ago',
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
     shared: false,
   },
   {
@@ -33,7 +36,7 @@ const mockFiles: FileData[] = [
     name: 'Team_Photo.jpg',
     type: 'image/jpeg',
     size: '3.2 MB',
-    modified: '1 week ago',
+    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 1 week ago
     shared: true,
     thumbnail: '/placeholder.svg',
   },
@@ -42,7 +45,7 @@ const mockFiles: FileData[] = [
     name: 'Client_Contract.pdf',
     type: 'application/pdf',
     size: '4.6 MB',
-    modified: '2 weeks ago',
+    createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000), // 2 weeks ago
     shared: false,
   },
   {
@@ -50,7 +53,7 @@ const mockFiles: FileData[] = [
     name: 'Product_Mockup.png',
     type: 'image/png',
     size: '2.8 MB',
-    modified: '3 weeks ago',
+    createdAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000), // 3 weeks ago
     shared: true,
     thumbnail: '/placeholder.svg',
   },
@@ -59,7 +62,7 @@ const mockFiles: FileData[] = [
     name: 'Research_Paper.docx',
     type: 'application/docx',
     size: '1.5 MB',
-    modified: '1 month ago',
+    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 1 month ago
     shared: false,
   },
 ];
@@ -70,6 +73,38 @@ const Dashboard = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<FileData | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const {user} = useAuthStore();
+
+
+  useEffect(() => {
+    console.log("User:", user);
+    if(!user) return;
+    ;(async() =>{
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("No authentication token found");
+
+        const userFiles =await apiClient.get(`/files/user/${user.userId}`,{
+          headers:{
+            "Authorization":`Bearer ${token}`
+          }
+        });
+    
+        const sharedFilesResponse = await apiClient.get(`/files/shared/${user.userId}`,{
+          headers:{
+            "Authorization":`Bearer ${token}`
+          }
+        });
+
+        console.log(userFiles.data.content);
+        console.log(sharedFilesResponse.data.content);
+      } catch (error) {
+        console.error("Error fetching files:", error);
+      }
+
+    })();
+    
+  },[]);
   
   const handleShare = (file: FileData) => {
     setSelectedFile(file);
@@ -114,28 +149,7 @@ const Dashboard = () => {
             <div className="flex gap-2">
               <ThemeToggle />
               
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button size="icon" variant="ghost" className="rounded-full h-10 w-10">
-                    <User className="h-5 w-5" />
-                    <span className="sr-only">User menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem>
-                    <User className="h-4 w-4 mr-2" />
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="h-4 w-4 mr-2" />
-                    Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Log out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <UserDropdown/>
             </div>
           </div>
         </div>

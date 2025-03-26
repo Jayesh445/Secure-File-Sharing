@@ -12,7 +12,7 @@ export interface FileData {
   name: string;
   type: string;
   size: string;
-  modified: string;
+  createdAt: Date;
   shared: boolean;
   thumbnail?: string;
 }
@@ -117,7 +117,7 @@ const FileCard = ({ file, onShare, onDelete, compact = false }: FileCardProps) =
               <span>•</span>
               <span className="flex items-center">
                 <Clock className="h-3 w-3 mr-1" />
-                {file.modified}
+                {file.createdAt.toLocaleString()}
               </span>
             </div>
           </div>
