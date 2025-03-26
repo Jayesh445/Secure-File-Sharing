@@ -11,6 +11,16 @@
       "status": 200
     }
   ],
+  "rewrites": [
+    {
+      "source": "/dashboard",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
   "errorPages": {
     "404": "/404",
     "500": "/500",
