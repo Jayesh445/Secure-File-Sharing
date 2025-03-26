@@ -12,10 +12,6 @@ import {
   Grid3X3,
   List,
   Plus,
-  User,
-  Settings,
-  LogOut,
-  Upload,
   ChevronRight,
   Eye,
   DownloadCloud,
@@ -28,59 +24,6 @@ import useAuthStore from "@/store/useAuthStore";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import UploadModal from "@/components/UploadModal";
 
-// Sample data
-// const mockFiles: FileData[] = [
-//   {
-//     id: '1',
-//     name: 'Project_Presentation.pptx',
-//     type: 'application/pptx',
-//     size: '2.4 MB',
-//     createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-//     shared: true,
-//   },
-//   {
-//     id: '2',
-//     name: 'Budget_2023.xlsx',
-//     type: 'application/xlsx',
-//     size: '1.8 MB',
-//     createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000), // 5 days ago
-//     shared: false,
-//   },
-//   {
-//     id: '3',
-//     name: 'Team_Photo.jpg',
-//     type: 'image/jpeg',
-//     size: '3.2 MB',
-//     createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 1 week ago
-//     shared: true,
-//     thumbnail: '/placeholder.svg',
-//   },
-//   {
-//     id: '4',
-//     name: 'Client_Contract.pdf',
-//     type: 'application/pdf',
-//     size: '4.6 MB',
-//     createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000), // 2 weeks ago
-//     shared: false,
-//   },
-//   {
-//     id: '5',
-//     name: 'Product_Mockup.png',
-//     type: 'image/png',
-//     size: '2.8 MB',
-//     createdAt: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000), // 3 weeks ago
-//     shared: true,
-//     thumbnail: '/placeholder.svg',
-//   },
-//   {
-//     id: '6',
-//     name: 'Research_Paper.docx',
-//     type: 'application/docx',
-//     size: '1.5 MB',
-//     createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 1 month ago
-//     shared: false,
-//   },
-// ];
 
 const Dashboard = () => {
   const [files, setFiles] = useState<FileData[]>([]);
@@ -92,8 +35,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    setLoading(true);
     if (!user) return;
+    setLoading(true);
     (async () => {
       try {
         const token = localStorage.getItem("token");
@@ -128,7 +71,7 @@ const Dashboard = () => {
         console.error("Error fetching files:", error);
       }
     })();
-  }, []);
+  }, [user  ]);
 
   const handleShare = (file: FileData) => {
     setSelectedFile(file);
@@ -325,10 +268,7 @@ const Dashboard = () => {
                           : "Upload your first file to get started"}
                       </p>
                       {!searchQuery && (
-                        <Button>
-                          <Upload className="h-4 w-4 mr-2" />
-                          Upload File
-                        </Button>
+                        <UploadModal/>
                       )}
                     </div>
                   ) : view === "grid" ? (

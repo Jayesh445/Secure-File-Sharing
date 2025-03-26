@@ -42,13 +42,9 @@ const AuthForm = ({ mode, backgroundImage }: AuthFormProps) => {
         `${API_URL}${endpoint}`,
         requestBody
       );
-      console.log(data);
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-      }
+
       if (data.userDto) {
-        localStorage.setItem("user", JSON.stringify(data.userDto));
-        login(data.userDto);
+        login(data.userDto, data.token);
       }
       navigate("/dashboard");
     } catch (err: any) {
