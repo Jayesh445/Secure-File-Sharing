@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { FileData } from './FileCard';
 import { Check, Copy, Mail } from 'lucide-react';
+import apiClient from '@/lib/axios';
 
 interface ShareModalProps {
   file: FileData | null;
@@ -16,7 +17,7 @@ interface ShareModalProps {
 }
 
 const ShareModal = ({ file, isOpen, onClose }: ShareModalProps) => {
-  const [shareLink, setShareLink] = useState('https://secureshare.example/s/aB12CdEf');
+  const [shareLink, setShareLink] = useState("");
   const [copied, setCopied] = useState(false);
   const [email, setEmail] = useState('');
   const [expiresAfter, setExpiresAfter] = useState('never');
@@ -24,6 +25,13 @@ const ShareModal = ({ file, isOpen, onClose }: ShareModalProps) => {
   const [password, setPassword] = useState('');
   const [allowDownload, setAllowDownload] = useState(true);
   const [isSharing, setIsSharing] = useState(false);
+
+  useEffect(() => {
+    if(file){
+      apiClient.post("/share/generate-link", { fileId: file.fileId,permissionType:"VIEW"})
+    }
+
+  },[isOpen]);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(shareLink);
@@ -49,7 +57,7 @@ const ShareModal = ({ file, isOpen, onClose }: ShareModalProps) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Share "{file.name}"</DialogTitle>
+          <DialogTitle>Share "{file.fileName}"</DialogTitle>
           <DialogDescription>
             Choose how you want to share this file
           </DialogDescription>

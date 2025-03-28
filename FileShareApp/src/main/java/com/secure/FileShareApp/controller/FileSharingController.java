@@ -32,7 +32,7 @@ public class FileSharingController {
         LocalDateTime now = LocalDateTime.now();
         int expiryTimeInMinutes = (int) Duration.between(now, expiryTime).toMinutes();
         String link = fileSharingService.generateShareableLink(
-                requestDto.getFileId(),requestDto.getUserId(), requestDto.getPermissionType(),expiryTimeInMinutes
+                requestDto.getFileId(), requestDto.getPermissionType(),expiryTimeInMinutes
         );
         return ResponseEntity.ok(link);
     }

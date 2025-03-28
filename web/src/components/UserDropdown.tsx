@@ -1,8 +1,19 @@
 import { LogOut, Settings, User } from "lucide-react"
 import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
+import useAuthStore from "@/store/useAuthStore"
+import {useLocation} from "react-router-dom";
 
 const UserDropdown = () => {
+  const {logout} = useAuthStore();
+  const handleLogout = (e:React.MouseEvent) => {
+    e.preventDefault();
+    if(confirm("Are you sure you want to log out?")){
+      logout();
+      useLocation().pathname="/";
+    }
+
+  }
   return (
     <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -20,7 +31,7 @@ const UserDropdown = () => {
                     <Settings className="h-4 w-4 mr-2" />
                     Settings
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="h-4 w-4 mr-2" />
                     Log out
                   </DropdownMenuItem>

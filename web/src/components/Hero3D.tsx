@@ -160,7 +160,7 @@ const Hero3D = () => {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="font-medium text-base bg-white/10 text-white border-white/20 hover:bg-white/20 transition-all duration-300 hover:scale-105">
-                <Link to="/#features">
+                <Link to="/features">
                   Learn More
                 </Link>
               </Button>

@@ -2,7 +2,6 @@ package com.secure.FileShareApp.service.impl;
 
 import com.secure.FileShareApp.annotation.FileIdParam;
 import com.secure.FileShareApp.annotation.LogAction;
-import com.secure.FileShareApp.annotation.UserIdParam;
 import com.secure.FileShareApp.entity.AuditAction;
 import com.secure.FileShareApp.entity.FilePermission;
 import com.secure.FileShareApp.entity.PermissionType;
@@ -107,17 +106,17 @@ public class FileSharingServiceImpl implements FileSharingService {
     @Override
     @Transactional
     @LogAction(action = AuditAction.DOWNLOAD_FILE)
-    public String generateShareableLink(@FileIdParam String fileId, @UserIdParam String userId, PermissionType permissionType, int expiryMinutes) {
+    public String generateShareableLink(@FileIdParam String fileId, PermissionType permissionType, int expiryMinutes) {
         System.out.println(" expiry -------  "+expiryMinutes);
         UploadedFile file = uploadedFileRepository.findById(fileId)
                 .orElseThrow(() -> new ResourceNotFoundException("File not found"));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         String token = UUID.randomUUID().toString();
         LocalDateTime expireTime = LocalDateTime.now().plusMinutes(expiryMinutes);
         FilePermission filePermission = new FilePermission();
         filePermission.setFile(file);
-        filePermission.setUser(user);
+//        filePermission.setUser(user);
         filePermission.setShareToken(token);
         filePermission.setExpireTime(expireTime);
         filePermission.setPermissionTypes(List.of(permissionType));

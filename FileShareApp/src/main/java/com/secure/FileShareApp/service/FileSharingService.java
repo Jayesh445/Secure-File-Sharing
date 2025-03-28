@@ -12,7 +12,7 @@ public interface FileSharingService {
 
     String generateZipDownloadLink(List<String> fileIds, int expiryMinutes);
 
-    String generateShareableLink(String fileId,String userId, PermissionType permissionType,int expiryMinutes );
+    String generateShareableLink(String fileId, PermissionType permissionType,int expiryMinutes );
 
     String getFileFromShareableLink(String token );
 }

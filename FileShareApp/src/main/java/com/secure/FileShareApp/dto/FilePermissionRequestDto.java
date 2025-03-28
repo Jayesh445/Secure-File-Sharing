@@ -11,7 +11,7 @@ public class FilePermissionRequestDto {
     @NotBlank(message = "File ID cannot be empty")
     private String fileId;
 
-    @NotBlank(message = "User ID cannot be empty")
+//    @NotBlank(message = "User ID cannot be empty")
     private String userId;
 
     @NotNull(message = "Permission Type is required")

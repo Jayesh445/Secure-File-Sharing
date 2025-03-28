@@ -36,8 +36,7 @@ public class FilePermission {
     private UploadedFile file;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    @NotNull(message = "User cannot be null")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ElementCollection(targetClass = PermissionType.class, fetch = FetchType.EAGER)
