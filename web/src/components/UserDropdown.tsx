@@ -2,15 +2,17 @@ import { LogOut, Settings, User } from "lucide-react"
 import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import useAuthStore from "@/store/useAuthStore"
-import {useLocation} from "react-router-dom";
+import  {useNavigate} from "react-router-dom";
 
 const UserDropdown = () => {
   const {logout} = useAuthStore();
+  const navigate = useNavigate();
+
   const handleLogout = (e:React.MouseEvent) => {
     e.preventDefault();
     if(confirm("Are you sure you want to log out?")){
       logout();
-      useLocation().pathname="/";
+      navigate("/");
     }
 
   }

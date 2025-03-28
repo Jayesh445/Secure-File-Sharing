@@ -3,8 +3,10 @@ package com.secure.FileShareApp.controller;
 import com.secure.FileShareApp.dto.FilePermissionRequestDto;
 import com.secure.FileShareApp.dto.FilePermissionWithExpiryRequestDto;
 import com.secure.FileShareApp.service.FileSharingService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -40,15 +43,19 @@ public class FileSharingController {
     @GetMapping("/access")
     public ResponseEntity<String> getFileFromShareableLink(@RequestParam String token) {
         String file = fileSharingService.getFileFromShareableLink(token);
-        return ResponseEntity.ok(file);
+        return ResponseEntity
+                .status(HttpStatus.FOUND)
+                .location(URI.create(file))
+                .build();
     }
 
     @PostMapping("/email/{email}")
     public ResponseEntity<String> sendEmail(
             @RequestBody @Valid FilePermissionRequestDto requestDto,
-            @PathVariable String email
+            @PathVariable String email,
+            HttpServletRequest request
     ){
-        if(fileSharingService.shareFileViaEmail(requestDto.getFileId(), requestDto.getUserId(), email, requestDto.getPermissionType())){
+        if(fileSharingService.shareFileViaEmail(requestDto.getFileId(), requestDto.getUserId(), email, requestDto.getPermissionType(),request)){
             return ResponseEntity.ok("Email sent successfully");
         }else {
             return ResponseEntity.ok("Email could not be sent");

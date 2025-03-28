@@ -14,7 +14,9 @@ import com.secure.FileShareApp.repository.UserRepository;
 import com.secure.FileShareApp.service.CloudinaryService;
 import com.secure.FileShareApp.service.FileSharingService;
 import com.secure.FileShareApp.utils.EmailUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +41,11 @@ public class FileSharingServiceImpl implements FileSharingService {
     private final CloudinaryService cloudinaryService;
     private final EmailUtils emailUtils;
 
+    @Value("${FRONTEND_URL}")
+    private String FRONTEND_URL;
+
     @Override
-    public boolean shareFileViaEmail(String fileId, String senderId, String recipientEmail, PermissionType permissionType) {
+    public boolean shareFileViaEmail(String fileId, String senderId, String recipientEmail, PermissionType permissionType, HttpServletRequest request) {
          User recipient = userRepository.findByEmail(recipientEmail)
                  .orElseThrow(() -> new ResourceNotFoundException("User with email " + recipientEmail + " not found"));
 
@@ -68,10 +73,20 @@ public class FileSharingServiceImpl implements FileSharingService {
 
         String url = cloudinaryService.generateFilePreview(fileId);
 
+        String frontendBaseUrl = request.getHeader("Origin"); // Preferred (more reliable)
+        if (frontendBaseUrl == null) {
+            frontendBaseUrl = request.getHeader("Referer"); // Fallback option
+        }
+        if (frontendBaseUrl == null) {
+            frontendBaseUrl = FRONTEND_URL;
+        }
+
+        String fileUrl = frontendBaseUrl +"/dashboard";
+
         String htmlContent = loadHtmlTemplate()
                 .replace("{{PERMISSION_TYPE}}", permissionType.name())
                 .replace("{{FILE_NAME}}", uploadedFile.getFileName())
-                .replace("{{FILE_URL}}", uploadedFile.getFilePath());
+                .replace("{{FILE_URL}}", fileUrl);
 
         emailUtils.sendEmailWithStreamAttachment(
                 recipientEmail,
@@ -111,7 +126,7 @@ public class FileSharingServiceImpl implements FileSharingService {
         UploadedFile file = uploadedFileRepository.findById(fileId)
                 .orElseThrow(() -> new ResourceNotFoundException("File not found"));
 //        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//                .orElse(null);
         String token = UUID.randomUUID().toString();
         LocalDateTime expireTime = LocalDateTime.now().plusMinutes(expiryMinutes);
         FilePermission filePermission = new FilePermission();
