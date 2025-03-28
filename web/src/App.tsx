@@ -15,12 +15,13 @@ import ServerError from "./pages/ServerError";
 import AdminDashboard from "./pages/Admin";
 import About from "./pages/About";
 import Features from "./pages/Features";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
+    // <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <BrowserRouter>
           <Toaster />
@@ -29,17 +30,23 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/features" element={<Features />} />
-            <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/about" element={<About />} />
+
+            <Route element={<ProtectedRoute requiredRole="USER" />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
+
+            <Route element={<ProtectedRoute requiredRole="ADMIN" />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Route>
             <Route path="/403" element={<Forbidden />} />
             <Route path="/500" element={<ServerError />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
-    </QueryClientProvider>
+    // </QueryClientProvider>
   );
 };
 

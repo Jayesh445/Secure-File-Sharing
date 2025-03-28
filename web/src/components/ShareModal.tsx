@@ -16,6 +16,7 @@ import { FileData } from "./FileCard";
 import { Check, Copy, Mail } from "lucide-react";
 import apiClient from "@/lib/axios";
 import useAuthStore from "@/store/useAuthStore";
+import { useToast } from "@/hooks/use-toast";
 
 interface ShareModalProps {
   file: FileData | null;
@@ -33,6 +34,7 @@ const ShareModal = ({ file, isOpen, onClose }: ShareModalProps) => {
   const [allowDownload, setAllowDownload] = useState(true);
   const [isSharing, setIsSharing] = useState(false);
   const { user, token } = useAuthStore();
+  const { toast } = useToast();
 
   const getExpiryDate = (value: string): Date | null => {
     const now = new Date();
@@ -100,18 +102,33 @@ const ShareModal = ({ file, isOpen, onClose }: ShareModalProps) => {
           },
         }
       );
+      toast({
+        title: response.data,
+        description: `Access for ${file.fileName} on email ${email} sent Successfully!!`,
+        variant: "default",
+      });
       alert(response.data || "Email sent successfully!");
     } catch (error) {
       console.error("Error sharing file via email:", error);
 
       if (error.response) {
-        alert(
-          `Error: ${error.response.data || "Failed to send email"}`
-        );
+        toast({
+          title: "Failed to send email",
+          description: error.response.data,
+          variant: "destructive",
+        });
       } else if (error.request) {
-        alert("No response from the server. Please try again.");
+        toast({
+          title: "Failed to send email",
+          description: "No response from the server. Please try again.",
+          variant: "destructive",
+        });
       } else {
-        alert("Something went wrong. Please try again.");
+        toast({
+          title: "Failed to send email",
+          description: "Something went wrong. Please try again.",
+          variant: "destructive",
+        });
       }
     } finally {
       setIsSharing(false);
