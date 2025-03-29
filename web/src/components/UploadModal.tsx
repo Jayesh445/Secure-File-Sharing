@@ -1,17 +1,23 @@
 import { useState } from "react";
 import { Upload, CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import apiClient from "@/lib/axios";
 import FileUpload from "./FileUpload";
 import useAuthStore from "@/store/useAuthStore";
+import { toast } from "@/hooks/use-toast";
 
 const UploadModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
-  const {user} = useAuthStore();
+  const { user } = useAuthStore();
 
   const handleUpload = async () => {
     if (files.length === 0) return;
@@ -23,32 +29,43 @@ const UploadModal = () => {
     try {
       if (files.length === 1) {
         files.forEach((file) => formData.append("file", file));
-        await apiClient.post(`/files/upload?userId=${user.userId}`, formData,{
-            headers:{
-                "Content-Type":"multipart/form-data",
-                "Authorization":`Bearer ${localStorage.getItem("token")}`
-            }
+        await apiClient.post(`/files/upload?userId=${user.userId}`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         });
       } else {
         files.forEach((file) => formData.append("files", file));
-        await apiClient.post(`/files/upload-multiple?userId=${user.userId}`, formData,{
-            headers:{
-                "Content-Type":"multipart/form-data",
-                "Authorization":`Bearer ${localStorage.getItem("token")}`
-            }
-        });
+        await apiClient.post(
+          `/files/upload-multiple?userId=${user.userId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
       }
-      
+
       setUploadSuccess(true);
-      setTimeout(() => {
-        setIsOpen(false);
-        setUploadSuccess(false);
-        setFiles([]);
-      }, 2000); // Close modal after success delay
+      toast({
+        title: "File Operation",
+        description: `File Uploaded Successfully`,
+        variant: "default",
+      });
     } catch (error) {
+      setUploadSuccess(false);
+      toast({
+        title: "File Operation",
+        description: `File Uploaded Failed`,
+        variant: "destructive",
+      });
       console.error("Upload failed:", error);
     } finally {
       setLoading(false);
+      setIsOpen(false);
     }
   };
 
@@ -65,7 +82,11 @@ const UploadModal = () => {
             <DialogTitle>Upload Files</DialogTitle>
           </DialogHeader>
 
-          <FileUpload onFileChange={(selectedFiles) => setFiles(Array.from(selectedFiles || []))} />
+          <FileUpload
+            onFileChange={(selectedFiles) =>
+              setFiles(Array.from(selectedFiles || []))
+            }
+          />
 
           {loading && (
             <div className="flex items-center justify-center mt-4 text-primary">
@@ -82,10 +103,17 @@ const UploadModal = () => {
           )}
 
           <div className="flex justify-end mt-4 space-x-2">
-            <Button variant="outline" onClick={() => setIsOpen(false)} disabled={loading}>
+            <Button
+              variant="outline"
+              onClick={() => setIsOpen(false)}
+              disabled={loading}
+            >
               Cancel
             </Button>
-            <Button onClick={handleUpload} disabled={files.length === 0 || loading}>
+            <Button
+              onClick={handleUpload}
+              disabled={files.length === 0 || loading}
+            >
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />

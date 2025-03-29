@@ -1,22 +1,31 @@
-
-import { useState } from 'react';
-import { File, MoreHorizontal, Download, Share, Trash, Eye, EyeOff, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
-
-export interface FileData {
-  fileId: string;
-  fileName: string;
-  fileType: string;
-  fileSize: string;
-  filePath: string;
-  folderPath: string;
-  createdAt: Date;
-  shared: boolean;
-}
+import { useState } from "react";
+import {
+  File,
+  MoreHorizontal,
+  Download,
+  Share,
+  Trash,
+  Eye,
+  EyeOff,
+  Clock,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { FileData } from "@/store/useFileStore";
 
 interface FileCardProps {
   file: FileData;
@@ -25,26 +34,33 @@ interface FileCardProps {
   compact?: boolean;
 }
 
-const FileCard = ({ file, onShare, onDelete, compact = false }: FileCardProps) => {
+const FileCard = ({
+  file,
+  onShare,
+  onDelete,
+  compact = false,
+}: FileCardProps) => {
   const [isHovering, setIsHovering] = useState(false);
 
   const CLOUD_URL = import.meta.env.VITE_CLOUD_URL;
-  
+
   const fileTypeIcon = () => {
-    switch (file.fileType.split('/')[0]) {
-      case 'image':
-        return <img 
-          src={CLOUD_URL+"/"+file.filePath || '/placeholder.svg'} 
-          alt={file.fileName} 
-          className="w-full h-full object-cover rounded-t-lg" 
-        />;
+    switch (file.fileType.split("/")[0]) {
+      case "image":
+        return (
+          <img
+            src={CLOUD_URL + "/" + file.filePath || "/placeholder.svg"}
+            alt={file.fileName}
+            className="w-full h-full object-cover rounded-t-lg"
+          />
+        );
       default:
         return <File className="w-12 h-12 text-primary opacity-60" />;
     }
   };
-  
+
   return (
-    <Card 
+    <Card
       className={cn(
         "overflow-hidden transition-all duration-200 hover:shadow-md",
         "border border-border bg-card hover:border-primary/20",
@@ -56,7 +72,7 @@ const FileCard = ({ file, onShare, onDelete, compact = false }: FileCardProps) =
       {!compact && (
         <div className="relative h-36 flex items-center justify-center bg-muted/40">
           {fileTypeIcon()}
-          
+
           {isHovering && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center gap-2 animate-fade-in">
               <TooltipProvider>
@@ -71,11 +87,16 @@ const FileCard = ({ file, onShare, onDelete, compact = false }: FileCardProps) =
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              
+
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="secondary" size="icon" className="h-8 w-8" onClick={() => onShare(file)}>
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => onShare(file)}
+                    >
                       <Share className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
@@ -84,7 +105,7 @@ const FileCard = ({ file, onShare, onDelete, compact = false }: FileCardProps) =
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              
+
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -101,20 +122,24 @@ const FileCard = ({ file, onShare, onDelete, compact = false }: FileCardProps) =
           )}
         </div>
       )}
-      
-      <div className={cn(
-        "flex items-center justify-between p-3",
-        compact ? "border-l-2 border-primary/70" : ""
-      )}>
+
+      <div
+        className={cn(
+          "flex items-center justify-between p-3",
+          compact ? "border-l-2 border-primary/70" : ""
+        )}
+      >
         <div className="flex items-center space-x-3 overflow-hidden">
           {compact && (
             <div className="flex-shrink-0">
               <File className="h-5 w-5 text-primary opacity-80" />
             </div>
           )}
-          
+
           <div className="overflow-hidden">
-            <p className="font-medium truncate" title={file.fileName}>{file.fileName}</p>
+            <p className="font-medium truncate" title={file.fileName}>
+              {file.fileName}
+            </p>
             <div className="flex items-center text-xs text-muted-foreground space-x-2">
               <span>{file.fileSize}</span>
               <span>•</span>
@@ -125,23 +150,31 @@ const FileCard = ({ file, onShare, onDelete, compact = false }: FileCardProps) =
             </div>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-1">
           {file.shared && (
             <span className="text-xs py-0.5 px-1.5 rounded-full bg-primary/10 text-primary mr-1">
               Shared
             </span>
           )}
-          
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full"
+              >
                 <MoreHorizontal className="h-4 w-4" />
                 <span className="sr-only">Open menu</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem onClick={() => window.alert('Download feature would be implemented here')}>
+              <DropdownMenuItem
+                onClick={() =>
+                  window.alert("Download feature would be implemented here")
+                }
+              >
                 <Download className="h-4 w-4 mr-2" />
                 Download
               </DropdownMenuItem>
@@ -163,7 +196,7 @@ const FileCard = ({ file, onShare, onDelete, compact = false }: FileCardProps) =
                 )}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 className="text-destructive focus:text-destructive"
                 onClick={() => onDelete(file.fileId)}
               >

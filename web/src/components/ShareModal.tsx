@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
-import { FileData } from "./FileCard";
+import { FileData } from "@/store/useFileStore";
 import { Check, Copy, Mail } from "lucide-react";
 import apiClient from "@/lib/axios";
 import useAuthStore from "@/store/useAuthStore";

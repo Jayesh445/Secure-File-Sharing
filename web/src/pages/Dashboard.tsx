@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import FileCard, { FileData } from "@/components/FileCard";
+import FileCard from "@/components/FileCard";
 import ShareModal from "@/components/ShareModal";
 import ThemeToggle from "@/components/ThemeToggle";
 import {
@@ -19,59 +19,27 @@ import {
   File,
 } from "lucide-react";
 import UserDropdown from "@/components/UserDropdown";
-import apiClient from "@/lib/axios";
-import useAuthStore from "@/store/useAuthStore";
 import SkeletonLoader from "@/components/SkeletonLoader";
 import UploadModal from "@/components/UploadModal";
-
+import useFileStore, { FileData } from "@/store/useFileStore";
+import { toast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
-  const [files, setFiles] = useState<FileData[]>([]);
+  // const [files, setFiles] = useState<FileData[]>([]);
   const [view, setView] = useState<"grid" | "list">("grid");
   const [showShareModal, setShowShareModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState<FileData | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const { user } = useAuthStore();
   const [loading, setLoading] = useState<boolean>(false);
+  const { fetchFiles, files, deleteFile } = useFileStore();
 
   useEffect(() => {
-    if (!user) return;
-    setLoading(true);
     (async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) throw new Error("No authentication token found");
-
-        const userFiles = await apiClient.get(`/files/user/${user.userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const sharedFilesResponse = await apiClient.get(
-          `/files/shared/${user.userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const sharedFiles = sharedFilesResponse.data.content.map(
-          (file: File) => ({
-            ...file,
-            shared: true,
-          })
-        );
-
-        setFiles([...userFiles.data.content, ...sharedFiles]);
-        console.log(userFiles.data.content);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching files:", error);
-      }
+      setLoading(true);
+      await fetchFiles();
+      setLoading(false);
     })();
-  }, [user  ]);
+  }, []);
 
   const handleShare = (file: FileData) => {
     setSelectedFile(file);
@@ -79,9 +47,14 @@ const Dashboard = () => {
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this file?")) {
-      setFiles(files.filter((file) => file.fileId !== id));
-    }
+    (async () => {
+      await deleteFile(id);
+      toast({
+        title: "File Operation",
+        description: `File ${files.find(file => file.fileId ==id).fileName} Deleted Successfully`,
+        variant: "default",
+      });
+    })();
   };
 
   const filteredFiles = searchQuery
@@ -171,7 +144,7 @@ const Dashboard = () => {
                     </Button>
                   </div>
 
-                  <UploadModal/>
+                  <UploadModal />
                 </div>
               </div>
 
@@ -267,9 +240,7 @@ const Dashboard = () => {
                           ? `No files match "${searchQuery}"`
                           : "Upload your first file to get started"}
                       </p>
-                      {!searchQuery && (
-                        <UploadModal/>
-                      )}
+                      {!searchQuery && <UploadModal />}
                     </div>
                   ) : view === "grid" ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-fade-in">
