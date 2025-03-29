@@ -6,6 +6,9 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
+    cors:{
+      origin: "https://secure-file-share-2svw.onrender.com"
+    }
   },
   plugins: [
     react(),
@@ -20,5 +23,6 @@ export default defineConfig(({ mode }) => ({
   build: {
     chunkSizeWarningLimit: 1024,
     outDir: "dist",
+    manifest:true,
   }
 }));
