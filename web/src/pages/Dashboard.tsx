@@ -249,7 +249,7 @@ const Dashboard = () => {
                           key={file.fileId}
                           file={file}
                           onShare={handleShare}
-                          onDelete={handleDelete}
+                          onDelete={() => handleDelete(file.fileId)}
                         />
                       ))}
                     </div>

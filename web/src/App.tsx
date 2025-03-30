@@ -15,6 +15,7 @@ import AdminDashboard from "./pages/Admin";
 import About from "./pages/About";
 import Features from "./pages/Features";
 import ProtectedRoute from "./components/ProtectedRoute";
+import FilePreview from "./pages/FilePreview";
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
 
             <Route element={<ProtectedRoute requiredRole="USER" />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/preview/:fileId" element={<FilePreview />}/>
             </Route>
 
             <Route element={<ProtectedRoute requiredRole="ADMIN" />}>

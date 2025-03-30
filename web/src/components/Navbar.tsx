@@ -11,7 +11,7 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { user, isAuthenticated, logout } = useAuthStore();
+  const {  isAuthenticated } = useAuthStore();
 
   // Handle scroll effect
   useEffect(() => {
@@ -72,17 +72,17 @@ const Navbar = () => {
               ))}
             </div>
 
-            {isAuthenticated ? (
-              <>
-                <Button asChild variant="ghost" size="sm">
-                  <Link to="/dashboard">Dashboard</Link>
-                </Button>
-                <UserDropdown/>
-              </>
-            ) : (
-              <>
-                <div className="flex items-center space-x-3">
-                  <ThemeToggle />
+            <div className="flex items-center space-x-3">
+              <ThemeToggle />
+              {isAuthenticated ? (
+                <>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link to="/dashboard">Dashboard</Link>
+                  </Button>
+                  <UserDropdown />
+                </>
+              ) : (
+                <>
                   <Button
                     asChild
                     variant="ghost"
@@ -94,13 +94,14 @@ const Navbar = () => {
                   <Button asChild size="sm">
                     <Link to="/signup">Sign up</Link>
                   </Button>
-                </div>
-              </>
-            )}
+                </>
+              )}
+            </div>
           </nav>
           {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden gap-2">
             <ThemeToggle />
+            {isAuthenticated ? <UserDropdown /> : <></>}
             <Button
               variant="ghost"
               size="icon"
@@ -112,6 +113,7 @@ const Navbar = () => {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle menu"
             >
+
               {isMobileMenuOpen ? (
                 <X className="h-5 w-5" />
               ) : (
@@ -136,18 +138,29 @@ const Navbar = () => {
               </Link>
             ))}
             <div className="pt-2 pb-3 border-t border-gray-200 dark:border-gray-800 mt-2">
-              <Link
-                to="/login"
-                className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted"
-              >
-                Log in
-              </Link>
-              <Link
-                to="/signup"
-                className="block px-3 py-2 rounded-md text-base font-medium bg-primary text-white hover:bg-primary/90 mt-2 text-center"
-              >
-                Sign up
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link to="/dashboard">Dashboard</Link>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className="block px-3 py-2 rounded-md text-base font-medium text-foreground hover:bg-muted"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="block px-3 py-2 rounded-md text-base font-medium bg-primary text-white hover:bg-primary/90 mt-2 text-center"
+                  >
+                    Sign up
+                  </Link>
+                </>
+              )}
+             
             </div>
           </div>
         </div>

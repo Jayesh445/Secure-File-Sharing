@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { FileData } from "@/store/useFileStore";
+import { useNavigate } from "react-router-dom";
 
 interface FileCardProps {
   file: FileData;
@@ -43,6 +44,7 @@ const FileCard = ({
   const [isHovering, setIsHovering] = useState(false);
 
   const CLOUD_URL = import.meta.env.VITE_CLOUD_URL;
+  const navigation = useNavigate();
 
   const fileTypeIcon = () => {
     switch (file.fileType.split("/")[0]) {
@@ -58,6 +60,11 @@ const FileCard = ({
         return <File className="w-12 h-12 text-primary opacity-60" />;
     }
   };
+
+
+  function handleFilePreview(file: FileData): void {  
+    navigation(`/preview/${file.fileId}`);
+  }
 
   return (
     <Card
@@ -78,7 +85,7 @@ const FileCard = ({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="secondary" size="icon" className="h-8 w-8">
+                    <Button variant="secondary" size="icon" className="h-8 w-8" onClick={() => handleFilePreview(file)}>
                       <Eye className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
@@ -145,7 +152,7 @@ const FileCard = ({
               <span>•</span>
               <span className="flex items-center">
                 <Clock className="h-3 w-3 mr-1" />
-                {file.createdAt.toLocaleString()}
+                {new Date(file.createdAt).toLocaleString()}
               </span>
             </div>
           </div>

@@ -70,9 +70,10 @@ const useFileStore = create<FileState>((set) => ({
                 const token = localStorage.getItem("token");
                 if (!token) throw new Error("No authentication token found");
 
-                await apiClient.delete(`/files/${id}`, {
+                const response = await apiClient.delete(`/files/${id}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
+                console.log(response);
 
                 // Update state by filtering out the deleted file
                 set({ files: files.filter((file) => file.fileId !== id) });
