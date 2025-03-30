@@ -8,7 +8,7 @@ public interface CloudinaryService {
 
     String uploadFile(MultipartFile file,String userId,String folderPath);
 
-    boolean deleteFile(String publicId,String folderPath,String fileName);
+    boolean deleteFile(String filePath);
 
     boolean moveFile(String userId, String fileName, String oldFolder, String newFolder);
 
