@@ -1,6 +1,7 @@
 package com.secure.FileShareApp.security;
 
 import com.secure.FileShareApp.entity.User;
+import com.secure.FileShareApp.service.TokenBlacklistService;
 import com.secure.FileShareApp.service.UserService;
 import com.secure.FileShareApp.utils.JwtUtils;
 import jakarta.servlet.FilterChain;
@@ -21,6 +22,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final UserService userService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     protected void doFilterInternal(@SuppressWarnings("null") HttpServletRequest request,
@@ -36,6 +38,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         jwt = authHeader.substring(7);
+        if (tokenBlacklistService.isBlacklisted(jwt)) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token is blacklisted");
+            return;
+        }
         email = jwtUtils.extractUsername(jwt);
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             User user = (User) userService.loadUserByUsername(email);

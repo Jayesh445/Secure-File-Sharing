@@ -31,5 +31,6 @@ public  interface UserService extends UserDetailsService {
 
      void reactivateUser(String userId);
 
+//    String logout(String authHeader);
 }
 

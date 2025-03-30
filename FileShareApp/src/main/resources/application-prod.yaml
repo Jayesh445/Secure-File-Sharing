@@ -40,9 +40,10 @@ spring:
             enable: true
 
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         format_sql: true
+  jta:
+    enabled: true

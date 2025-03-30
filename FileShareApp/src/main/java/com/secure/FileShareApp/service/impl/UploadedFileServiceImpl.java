@@ -124,7 +124,7 @@ public class UploadedFileServiceImpl implements UploadedFileService {
     )
     public boolean deleteFile(@FileIdParam String fileId) {
         UploadedFile uploadedFile = uploadedFileRepository.findById(fileId).orElseThrow(() -> new RuntimeException("File not found"));
-        if(!cloudinaryService.deleteFile(uploadedFile.getFilePath(),uploadedFile.getFolderPath(),uploadedFile.getFileName())){
+        if(!cloudinaryService.deleteFile(uploadedFile.getFilePath())){
             throw new RuntimeException("Failed to delete file");
         }
         uploadedFileRepository.deleteById(fileId);

@@ -45,13 +45,13 @@ public class CloudinaryServiceImpl implements CloudinaryService {
     }
 
     @Override
-    public boolean deleteFile( String userId,String folderPath,String fileName ) {
+    public boolean deleteFile( String filePath ) {
         try {
-            String publicId = (folderPath==null || folderPath.isEmpty()) ? "user_files/"+userId+"/"+fileName:"user_files/"+userId+"/"+folderPath+"/"+fileName;
-            Map<?, ?> result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+//            String publicId = (folderPath==null || folderPath.isEmpty()) ? "user_files/"+userId+"/"+fileName:"user_files/"+userId+"/"+folderPath+"/"+fileName;
+            Map<?, ?> result = cloudinary.uploader().destroy(filePath, ObjectUtils.emptyMap());
             return "ok".equals(result.get("result"));
         } catch (IOException e) {
-            throw new RuntimeException("Failed to delete file", e);
+            throw new RuntimeException("Failed to delete file"+e.getMessage());
         }
     }
 

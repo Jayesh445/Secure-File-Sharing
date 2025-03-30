@@ -22,13 +22,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -153,8 +156,8 @@ public class FileSharingServiceImpl implements FileSharingService {
 
     private String loadHtmlTemplate() {
         ClassPathResource resource = new ClassPathResource("templates/email-template.html");
-        try {
-            return Files.readString(resource.getFile().toPath(), StandardCharsets.UTF_8);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream(),StandardCharsets.UTF_8))){
+            return reader.lines().collect(Collectors.joining("\n"));
         } catch (IOException e) {
             throw new RuntimeException("Failed to load template"+ e.getMessage());
         }

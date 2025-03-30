@@ -27,25 +27,25 @@ public class UserController {
     @PutMapping
     public ResponseEntity<UserResponseDto> updateUser(@RequestBody UserDto userDto) {
         UserResponseDto updatedUser = userService.updateUser(userDto);
-        return  ResponseEntity.ok(updatedUser);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping
     public ResponseEntity<?> deleteUser(@RequestBody UserDto userDto) {
         userService.deleteUser(userDto);
-        return ResponseEntity.ok("Deleted user with email "+userDto.getEmail()+"successfully");
+        return ResponseEntity.ok("Deleted user with email " + userDto.getEmail() + "successfully");
     }
 
     @GetMapping("/email/{email}")
     public ResponseEntity<UserResponseDto> getUserByEmail(@PathVariable String email) {
         UserResponseDto user = userService.getUserByEmail(email);
-        return  ResponseEntity.ok(user);
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/all")
     public ResponseEntity<List<UserResponseDto>> getUsers() {
         List<UserResponseDto> allUsers = userService.getAllUsers();
-        return  ResponseEntity.ok(allUsers);
+        return ResponseEntity.ok(allUsers);
     }
 
     @GetMapping
