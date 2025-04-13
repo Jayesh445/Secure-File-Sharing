@@ -3,14 +3,21 @@ import { Button } from "./ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import useAuthStore from "@/store/useAuthStore"
 import  {useNavigate} from "react-router-dom";
+import apiClient from "@/lib/axios";
 
 const UserDropdown = () => {
-  const {logout} = useAuthStore();
+  const {logout,token} = useAuthStore();
   const navigate = useNavigate();
 
   const handleLogout = (e:React.MouseEvent) => {
     e.preventDefault();
     if(confirm("Are you sure you want to log out?")){
+      apiClient.post("/api/auth/logout",{},{
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      })
       logout();
       navigate("/");
     }
