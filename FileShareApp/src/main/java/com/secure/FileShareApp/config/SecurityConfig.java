@@ -2,6 +2,7 @@ package com.secure.FileShareApp.config;
 
 import com.secure.FileShareApp.security.AuthEntryPointJwt;
 import com.secure.FileShareApp.security.JwtAuthenticationFilter;
+import com.secure.FileShareApp.utils.CustomOAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomOAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Value("${FRONTEND_URL}")
     private String frontendUrl;
@@ -37,12 +39,14 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers("/share/access").permitAll()
                         .requestMatchers("/user/**", "/file/**").hasRole("USER")
                         .requestMatchers("/audit/**", "/roles/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
+                .oauth2Login(oauth2 -> oauth2.successHandler(oAuth2SuccessHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.exceptionHandling(exception -> exception.authenticationEntryPoint(new AuthEntryPointJwt()));
