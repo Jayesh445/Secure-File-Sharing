@@ -24,6 +24,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
+        System.out.println("success " + email);
 
         // generate your JWT here
         User user = new User();
