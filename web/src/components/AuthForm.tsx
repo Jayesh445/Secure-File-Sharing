@@ -207,7 +207,7 @@ const AuthForm = ({ mode, backgroundImage }: AuthFormProps) => {
                     variant="outline"
                     className="w-full h-11"
                     onClick={() =>
-                      window.location.href="https://adequate-maris-ltce-575357fb.koyeb.app/oauth2/authorization/google"
+                      window.location.href="https://adequate-maris-ltce-575357fb.koyeb.app/api/oauth2/authorization/google"
                     }
                   >
                     <FcGoogle />
@@ -218,7 +218,7 @@ const AuthForm = ({ mode, backgroundImage }: AuthFormProps) => {
                     variant="outline"
                     className="w-full h-11"
                     onClick={() => 
-                      window.location.href="https://adequate-maris-ltce-575357fb.koyeb.app/oauth2/authorization/github"
+                      window.location.href="https://adequate-maris-ltce-575357fb.koyeb.app/api/oauth2/authorization/github"
                     }
                   >
                     <FaGithub />
