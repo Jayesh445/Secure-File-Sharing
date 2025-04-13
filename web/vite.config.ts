@@ -4,6 +4,7 @@ import path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base:"/",
   server: {
     cors:{
       origin: "https://secure-file-share-2svw.onrender.com"

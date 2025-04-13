@@ -6,16 +6,8 @@
   },
   "rewrites": [
     {
-      "source": "/about",
-      "destination": "/"
-    },
-    {
-      "source": "/contact",
-      "destination": "/"
-    },
-    {
-      "source": "/dashboard",
-      "destination": "/"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "errorPages": {
