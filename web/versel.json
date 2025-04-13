@@ -14,5 +14,7 @@
     "404": "/404",
     "500": "/500",
     "403": "/403"
-  }
+  },
+  "cleanUrls": true,
+  "trailingSlash": false
 }
