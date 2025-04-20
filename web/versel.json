@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/dist/index.html"
+      "destination": "./dist/index.html"
     }
   ],
   "cleanUrls": true,
