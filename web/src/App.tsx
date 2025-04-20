@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 // Pages
 import Index from "./pages/Index";
@@ -24,6 +25,7 @@ const App = () => {
         <BrowserRouter>
           <Toaster />
           <Sonner />
+          <SpeedInsights/>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
@@ -44,7 +46,7 @@ const App = () => {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-      </TooltipProvider>
+      </TooltipProvider>  
     // </QueryClientProvider>
   );
 };
