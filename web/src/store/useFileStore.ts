@@ -37,11 +37,11 @@ const useFileStore = create<FileState>((set) => ({
         try {
             if (!token) throw new Error("No authentication token found");
 
-            const userFilesResponse = await apiClient.get(`/files/user/${user.userId}`, {
+            const userFilesResponse = await apiClient.get(`/files/user/${user.userId}?size=200`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            const sharedFilesResponse = await apiClient.get(`/files/shared/${user.userId}`, {
+            const sharedFilesResponse = await apiClient.get(`/files/shared/${user.userId}?size=200`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
